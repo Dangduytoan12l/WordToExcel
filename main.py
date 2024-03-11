@@ -1,11 +1,12 @@
 import os
+import re
 import docx
 import pypandoc
 import pandas as pd
 import win32com.client as win32
 from pdf2docx import Converter
 from win32com.client import constants
-from utils import *
+from utils import CFL, create_quiz, extract_format_text, is_option, is_question, process_options, split_options
 
 # Function to convert .doc to .docx
 def format_file(file_path: str, del_list: list) -> tuple:
@@ -47,12 +48,13 @@ def format_file(file_path: str, del_list: list) -> tuple:
     # Function to extract formatted text
     def extract_original_format(file_path: str) -> list:
         highlights = []
+        opt_highlights = []
         document = docx.Document(file_path)
         #Append the highlighted text
         for paragraph in document.paragraphs:
             highlighted_text = extract_format_text(paragraph)
             if is_option(highlighted_text): 
-                highlights.append(CFL(re.sub(r'^[a-dA-D]\.', '', highlighted_text).strip()))
+                highlights.append(CFL(highlighted_text))
         return highlights
 
     # Split the file path into name and extension

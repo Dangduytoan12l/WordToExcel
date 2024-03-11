@@ -2,8 +2,8 @@ import os
 import docx
 import tkinter as tk
 from subprocess import Popen, PIPE
-from utils import close_excel
-from main import open_folder, question_create, data_frame, format_file
+from utils import close_excel, open_folder
+from main import question_create, data_frame, format_file
 
 def run() -> None:
     """

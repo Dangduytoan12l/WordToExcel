@@ -37,10 +37,10 @@ def split_options(text: str) -> list:
 
 
 def extract_format_text(text: str) -> str:
-    """Extracts formatted text (highlighted, bold, underline, italic) from a paragraph."""
+    """Extracts formatted text (highlighted, bold, underline, italic) if not return empty string"""
     format_text = ""
     for run in text.runs:
-        if run.font.highlight_color or run.bold or run.underline or run.italic:
+        if run.font.highlight_color or run.font.bold or run.font.underline:
             format_text += run.text
     return format_text
 
@@ -57,9 +57,9 @@ def get_correct_answer_index(options: list, highlights: list) -> int:
 
     # Gets the index of the correct answer from options based on highlighted text.
     for index, option_text in enumerate(options):
-        cleaned_text = re.sub(r'^[a-dA-D]\. ', '', option_text).strip()
+        option_text
         try:
-            if cleaned_text == highlights[0]:
+            if option_text == highlights[0] or option_text[0] == highlights[0]:
                 highlights.pop(0)
                 return index+1
         except Exception:
