@@ -25,6 +25,7 @@ def format_file(file_path: str, del_list: list) -> tuple:
     The extracted highlights are based on specific formatting rules within the document.
     """
     def convert_to_docx(file_path_convert: str, name: str, del_list: list) -> list:
+        global temp_name_docx
         temp_name = f'wteTemp{name}'
         
         # Load the DOCX document using pypandoc
@@ -56,12 +57,14 @@ def format_file(file_path: str, del_list: list) -> tuple:
 
     # Split the file path into name and extension
     name, ext = os.path.splitext(os.path.basename(file_path))
+    temp_name = f"wteDocTemp{name}"
+    temp_path = os.path.abspath(f"wteDocTemp{name}.docx")
+    temp_path_docx = f"wteTemp{name}.docx"
     abs_file_path = os.path.abspath(file_path)
     new_abs_file_path = os.path.splitext(abs_file_path)[0] + '.docx'
     # If the extension is .doc change it into .docx and do the same as .docx
     if ext == ".doc":
-        temp_name = f"wteDocTemp{name}"
-        temp_path = os.path.abspath(f"{temp_name}.docx")
+
         
         # Opening MS Word
         word = win32.gencache.EnsureDispatch('Word.Application')
@@ -81,7 +84,7 @@ def format_file(file_path: str, del_list: list) -> tuple:
     elif ext == ".docx":
         del_list = convert_to_docx(abs_file_path, name, del_list)
         highlights = extract_original_format(file_path)
-        return new_abs_file_path, highlights, del_list   
+        return temp_path_docx, highlights, del_list   
     
     elif ext == ".pdf":
         cv = Converter(abs_file_path)
@@ -119,8 +122,9 @@ def question_create(doc, current_question: str, current_options: list, highlight
         return question_numbers
     for paragraph in doc.paragraphs:
         text = paragraph.text.strip()
-        
+        print(text + '\n')
         if is_question(text):
+            
             if current_question and len(current_options) > 0:
                 current_question, current_options = process_options(current_question, current_options, selected_options, question_numbers)
                 question_numbers += 1
@@ -155,7 +159,7 @@ def data_frame(data: list, file_path: str, selected_options: list, open_file: bo
     
     df = pd.DataFrame(data)
     
-    if "Shuffle questions" in selected_options:
+    if "Xáo trộn câu hỏi" in selected_options:
         df = df.sample(frac=1)
     
     df.to_excel(output_path, index=False)

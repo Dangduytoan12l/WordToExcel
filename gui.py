@@ -35,10 +35,10 @@ def run() -> None:
         current_question = ""
         current_options = []
 
-        # Convert .doc to .docx if needed
+        # Convert .doc to .docx if needed and get the new .docx file path
         path, highlights, del_list = format_file(file_path, del_list)
         if path is False:
-            status_label.config(text="Lỗi định dạng định dạng, vui lòng chọn file Word!", fg="red")
+            status_label.config(text="Lỗi định dạng file, vui lòng chọn file Word!", fg="red")
             break
 
         doc = docx.Document(path)
@@ -105,12 +105,13 @@ platform_blooket.grid(row=2, column=2, pady=10, padx=10, sticky="w")
 checkbox_options = ["Xóa chữ 'Câu'", "Thêm chữ 'Câu'", "Sửa lỗi định dạng","Xóa chữ 'A,B,C,D'", "Xáo trộn câu hỏi", "Gộp nhiều tệp thành một"]
 checkboxes = {}
 
-
+curr, next = False, False
 def update_checkboxes()-> None:
     """
     Function to make sure that only one checkbox can be selected at the same time.
     """
     global curr, next
+    
     if curr and checkboxes["Xóa chữ 'Câu'"].get():
         checkboxes["Thêm chữ 'Câu'"].set(False)
     if not curr and checkboxes["Xóa chữ 'Câu'"].get():

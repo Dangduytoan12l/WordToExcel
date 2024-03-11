@@ -4,13 +4,13 @@ from tkinter.filedialog import askopenfilenames
 
 # Helper function to open a window that specifies a file's path
 def open_folder():
-    """Opens a file dialog to select multiple files and return their paths."""
+    """Opens a file dialog to select multiple files"""
     filepaths = askopenfilenames()
     return filepaths
 
 # Capitalize first letter
 def CFL(text: str) -> str:
-    """Capitalize the first letter of the string but not the remainings."""
+    """Capitalize the first letter of the string"""
     if text:
         return text[0].upper() + text[1:]
     else:
@@ -19,9 +19,10 @@ def CFL(text: str) -> str:
 # Helper function to check whether a text is a question
 def is_question(text: str) -> bool:
     """Check if a text is a question."""
-    prefixes = ("Câu", "câu", "1", "2", "3", "4", "5", "6", "7", "8", "9")
-    return any(text.startswith(prefix) for prefix in prefixes)
-
+    prefixes = ("Câu", "câu", '1', '2', '3', '4', '5', '6', '7', '8', '9')
+    regex_pattern = r"\b(?:Câu|câu|\d+)\b|\b(?:\d+)\."
+    regex = re.compile(regex_pattern)
+    return bool(regex.match(text))
 # Helper function to check if a paragraph starts with an option (A, B, C, D)
 def is_option(text: str) -> bool:
     """Check if a text is option"""
@@ -32,7 +33,7 @@ def is_option(text: str) -> bool:
 def split_options(text: str) -> list:
     """Splits options that are on the same line into a list."""
     if is_option(text):
-        return re.split(r'\s+(?=^[a-dA-D]\.)', text)
+        return re.split(r'\s+(?=[a-dA-D]\.)', text, flags=re.IGNORECASE)
 
 
 def extract_format_text(text: str) -> str:
