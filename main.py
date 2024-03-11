@@ -122,7 +122,6 @@ def question_create(doc, current_question: str, current_options: list, highlight
         return question_numbers
     for paragraph in doc.paragraphs:
         text = paragraph.text.strip()
-        print(text + '\n')
         if is_question(text):
             
             if current_question and len(current_options) > 0:
