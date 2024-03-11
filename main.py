@@ -22,11 +22,6 @@ def format_file(file_path: str, del_list: list) -> tuple:
             - A list of extracted highlights and formatted text.
             - A list of file paths to delete after processing.
 
-    The function performs the following tasks:
-    - If the input file is in DOC format, it converts it to DOCX, extracts formatted text, and returns relevant data.
-    - If the input file is in DOCX format, it extracts formatted text and returns relevant data.
-    - If the input file is in PDF format, it converts it to DOCX, extracts formatted text, and returns relevant data.
-
     The extracted highlights are based on specific formatting rules within the document.
     """
     def convert_to_docx(file_path_convert: str, name: str, del_list: list) -> list:
@@ -114,16 +109,6 @@ def question_create(doc, current_question: str, current_options: list, highlight
 
     Returns:
         int: The updated question number after processing.
-
-    This function processes the paragraphs within a document, identifies questions and options based on specific formatting rules, and creates quiz questions with answer options and highlights. It updates the data list with the generated quiz questions.
-
-    When processing a document:
-    - A new question is identified when the text formatting indicates a question.
-    - Options are added to the current question as they are encountered.
-    - Once a new question is detected, the previous question is completed, and the data list is updated.
-
-    After processing, the function also handles the last question and returns the updated question number.
-
     Note: The document structure and formatting rules must align with the processing logic for accurate results.
     """
     def last_question(current_question: str, current_options: list, highlights: list, data: list, platform: str, selected_options: list, question_numbers: int) -> int:
@@ -154,7 +139,7 @@ def question_create(doc, current_question: str, current_options: list, highlight
 # Function to create an Excel data frame
 def data_frame(data: list, file_path: str, selected_options: list, open_file: bool = True) -> None:
     """
-    Convert a list of data into a DataFrame, optionally shuffle rows, and save it as an Excel file.
+    Convert a list of data into a DataFrame, optionally random rows, and save it as an Excel file.
 
     Args:
         data (list): The data to be converted into a DataFrame.

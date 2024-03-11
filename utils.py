@@ -18,10 +18,9 @@ def CFL(text: str) -> str:
 
 # Helper function to check whether a text is a question
 def is_question(text: str) -> bool:
-    """Check if a text is question."""
-    if text.startswith(("Câu", "câu", "1", "2", "3", "4", "5", "6", "7", "8", "9")):
-        print(text)
-        return True
+    """Check if a text is a question."""
+    prefixes = ("Câu", "câu", "1", "2", "3", "4", "5", "6", "7", "8", "9")
+    return any(text.startswith(prefix) for prefix in prefixes)
 
 # Helper function to check if a paragraph starts with an option (A, B, C, D)
 def is_option(text: str) -> bool:

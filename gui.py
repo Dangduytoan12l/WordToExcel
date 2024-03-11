@@ -9,7 +9,7 @@ def run() -> None:
     """
     Execute the main processing logic for converting Word documents into quiz data.
     """
-
+    var = False
     # Step 1: Get selected file paths
     file_paths = open_folder()
 
@@ -46,13 +46,13 @@ def run() -> None:
 
         if "Gộp nhiều tệp thành một" not in selected_options:
             question_numbers = 1
-            data_frame(data, file_path, selected_options, open=True)
+            data_frame(data, file_path, selected_options, open_file=True)
         else:
             all_data.extend(data)
 
     # Step 6: Merge multiple files if selected option is enabled
     if "Gộp nhiều tệp thành một" in selected_options:
-        data_frame(all_data, "Merged_File.xlsx", selected_options, open=True)
+        data_frame(all_data, "Merged_File.xlsx", selected_options, open_file=True)
 
     # Step 7: Delete temporary files
     for temp_file in del_list:
@@ -82,7 +82,6 @@ window.iconphoto(False, p1)
 # Header label
 header_label = tk.Label(main_frame, text="Convert Word to Excel", font=("Helvetica", 16))
 header_label.grid(row=0, column=0, columnspan=3, pady=10)
-
 # File selection button
 file_button = tk.Button(main_frame, text="Select Word Document", command=run)
 file_button.grid(row=1, column=0, columnspan=3, pady=10)
@@ -106,15 +105,24 @@ platform_blooket.grid(row=2, column=2, pady=10, padx=10, sticky="w")
 checkbox_options = ["Xóa chữ 'Câu'", "Thêm chữ 'Câu'", "Sửa lỗi định dạng","Xóa chữ 'A,B,C,D'", "Xáo trộn câu hỏi", "Gộp nhiều tệp thành một"]
 checkboxes = {}
 
+
+def update_checkboxes()-> None:
+    global curr, next
+    if curr and checkboxes["Xóa chữ 'Câu'"].get():
+        checkboxes["Thêm chữ 'Câu'"].set(False)
+    if not curr and checkboxes["Xóa chữ 'Câu'"].get():
+        checkboxes["Xóa chữ 'Câu'"].set(False);
+    curr = checkboxes["Thêm chữ 'Câu'"].get()
+curr, next = False, False
+
 for i, option_text in enumerate(checkbox_options):
     var = tk.BooleanVar()
     checkboxes[option_text] = var
-    checkbox = tk.Checkbutton(main_frame, text=option_text, variable=var, anchor="w")
+    checkbox = tk.Checkbutton(main_frame, text=option_text, variable=var, anchor="w",command=update_checkboxes)
     checkbox.grid(row=3 + (i // 3), column=i % 3, pady=10, padx=10, sticky="w")
 
 # Set "Sửa lỗi định dạng" checkbox to be always checked
 checkboxes["Sửa lỗi định dạng"].set(True)
-checkboxes["Thêm chữ 'Câu'"].set(True)
 
 # Create a frame for the version label
 version_label = tk.Label(main_frame, text="Author: caphefalumi", fg="blue", font=("Open sans", 8))
