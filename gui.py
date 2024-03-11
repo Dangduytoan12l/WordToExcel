@@ -107,13 +107,18 @@ checkboxes = {}
 
 
 def update_checkboxes()-> None:
-    global curr
+    """
+    Function to make sure that only one checkbox can be selected at the same time.
+    """
+    global curr, next
     if curr and checkboxes["Xóa chữ 'Câu'"].get():
         checkboxes["Thêm chữ 'Câu'"].set(False)
     if not curr and checkboxes["Xóa chữ 'Câu'"].get():
-        checkboxes["Xóa chữ 'Câu'"].set(False);
+        checkboxes["Xóa chữ 'Câu'"].set(False)
+    if not curr and not next and not checkboxes["Thêm chữ 'Câu'"].get():
+        checkboxes["Xóa chữ 'Câu'"].set(True)
     curr = checkboxes["Thêm chữ 'Câu'"].get()
-curr = False
+    next = checkboxes["Xóa chữ 'Câu'"].get()
 
 for i, option_text in enumerate(checkbox_options):
     var = tk.BooleanVar()
