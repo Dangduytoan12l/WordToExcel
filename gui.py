@@ -107,13 +107,13 @@ checkboxes = {}
 
 
 def update_checkboxes()-> None:
-    global curr, next
+    global curr
     if curr and checkboxes["Xóa chữ 'Câu'"].get():
         checkboxes["Thêm chữ 'Câu'"].set(False)
     if not curr and checkboxes["Xóa chữ 'Câu'"].get():
         checkboxes["Xóa chữ 'Câu'"].set(False);
     curr = checkboxes["Thêm chữ 'Câu'"].get()
-curr, next = False, False
+curr = False
 
 for i, option_text in enumerate(checkbox_options):
     var = tk.BooleanVar()
