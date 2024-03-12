@@ -1,5 +1,5 @@
 # -*- mode: python ; coding: utf-8 -*-
-import shutil
+
 
 a = Analysis(
     ['C:\\Users\\Toan\\WordToExcel\\gui.py'],
@@ -19,13 +19,6 @@ exe = EXE(
     pyz,
     a.scripts,
     [],
-    a.binaries + [('msvcp100.dll', 'C:\\Windows\\System32\\msvcp100.dll', 'BINARY'),
-            ('msvcr100.dll', 'C:\\Windows\\System32\\msvcr100.dll', 'BINARY'), 
-            ('vcruntime140_1.dll', 'C:\Windows\System32\vcruntime140_1.dll', 'BINARY'),
-            ('vcruntime140.dll', 'C:\Windows\System32\vcruntime140.dll', 'BINARY'),
-            ('pywintypes311.dll', 'C:\Windows\System32\pywintypes311.dll', 'BINARY'),
-            ('pythoncom311.dll', 'C:\Windows\System32\pythoncom311.dll', 'BINARY')],
-    a.zipfiles, a.datas,
     exclude_binaries=True,
     name='WordToExcel',
     debug=False,
@@ -49,4 +42,3 @@ coll = COLLECT(
     upx_exclude=[],
     name='WordToExcel',
 )
-shutil.copyfile('Images/logo.png', '{0}/WordToExcel/logo.png'.format(DISTPATH))

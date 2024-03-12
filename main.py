@@ -1,58 +1,122 @@
-import pandas as pd
-from os import path, startfile
-from subprocess import Popen
-from utils import *
+import os
+import re
+import docx
+import pypandoc
+import win32com.client as win32
+from pdf2docx import Converter
+from win32com.client import constants
+from utils import CFL, create_quiz, extract_format_text, is_option, is_question, process_options, split_options
 
+# Function to convert .doc to .docx
+def format_file(file_path: str, del_list: list) -> tuple:
+    """
+    Format a document file to DOCX, extract formatted text, and return relevant information.
+    
+    The extracted highlights are based on specific formatting rules within the document.
+    """
+    def convert_to_docx(file_path_convert: str, name: str, del_list: list) -> list:
+        global temp_name_docx
+        temp_name = f'wteTemp{name}'
+        
+        # Load the DOCX document using pypandoc
+        pypandoc.convert_file(file_path_convert, 'plain', extra_args=['--wrap=none'], outputfile=f'{temp_name}.txt')
+        document = docx.Document()
+        
+        # Read the text from the file and replace soft returns with paragraph marks
+        with open(f'{temp_name}.txt', 'r', encoding='utf-8') as file:
+            text = file.readlines()
+        
+        for line in text:
+            document.add_paragraph(line)
+        
+        document.save(f'{temp_name}.docx')
+        os.remove(f'{temp_name}.txt')
+        del_list.append(os.path.abspath(f'{temp_name}.docx'))
+        return del_list
 
-# Iterate through the document to extract highlighted text and create a quiz
-def questionCreate(doc, current_question, current_options, highlights, data, platform, selected_options, question_numbers):
+    # Function to extract formatted text
+    def extract_original_format(file_path: str) -> list:
+        highlights = []
+        opt_highlights = []
+        document = docx.Document(file_path)
+        
+        #Append the highlighted text
+        for paragraph in document.paragraphs:
+            highlighted_text = extract_format_text(paragraph)
+            match = re.match(r'^([a-dA-D])\.', highlighted_text)
+            if is_option(highlighted_text): 
+                highlights.append(CFL(re.sub(r'^[a-dA-D]\.', '', highlighted_text).strip()))
+                opt_highlights.append(CFL(match.group(1)))
+                
+        if(len(highlights)>len(opt_highlights)): return highlights
+        else: return opt_highlights
+
+    # Split the file path into name and extension
+    name, ext = os.path.splitext(os.path.basename(file_path))
+    temp_name = f"wteDocTemp{name}"
+    temp_path = os.path.abspath(f"wteDocTemp{name}.docx")
+    temp_path_docx = f"wteTemp{name}.docx"
+    abs_file_path = os.path.abspath(file_path)
+    new_abs_file_path = os.path.splitext(abs_file_path)[0] + '.docx'
+    # If the extension is .doc change it into .docx and do the same as .docx
+    if ext == ".doc":
+
+        
+        # Opening MS Word
+        word = win32.gencache.EnsureDispatch('Word.Application')
+        doc = word.Documents.Open(abs_file_path)
+        doc.Activate()
+        
+        # Save and Close
+        word.ActiveDocument.SaveAs(temp_name, FileFormat=constants.wdFormatXMLDocument)
+        doc.Close(False)
+        
+        # Get the list to delete
+        del_list = convert_to_docx(temp_path, name, del_list)
+        del_list.append(temp_path)
+        highlights = extract_original_format(temp_path)
+        return temp_path, highlights, del_list
+
+    elif ext == ".docx":
+        del_list = convert_to_docx(abs_file_path, name, del_list)
+        highlights = extract_original_format(file_path)
+        return temp_path_docx, highlights, del_list   
+    
+    elif ext == ".pdf":
+        cv = Converter(abs_file_path)
+        cv.convert(new_abs_file_path, start=0, end=None)
+        cv.close()
+        del_list = convert_to_docx(new_abs_file_path, name, del_list)
+        highlights = extract_original_format(new_abs_file_path)
+        return new_abs_file_path, highlights, del_list
+    return False, None, None
+
+# Function to process questions and options
+def question_create(doc, current_question: str, current_options: list, highlights: list, data: list, platform: str, selected_options: list, question_numbers: int) -> int:
+    """
+    Process a document to create quiz questions and options based on specific formatting.
+    The document structure and formatting rules must align with the processing logic for accurate results.
+    """
+    def last_question(current_question: str, current_options: list, highlights: list, data: list, platform: str, selected_options: list, question_numbers: int) -> int:
+        if current_question and len(current_options) > 0:
+            question_numbers += 1
+            current_question, current_options = process_options(current_question, current_options, selected_options, question_numbers)
+            create_quiz(data, current_question, current_options, highlights, platform)
+        return question_numbers
     for paragraph in doc.paragraphs:
-        highlighted_text = extract_format_text(paragraph)
-        highlights.append(highlighted_text)
         text = paragraph.text.strip()
-
-        # Check if the paragraph is empty
-        if not text:
-            continue
-
-        if text.startswith("Câu ") or text[0].isdigit() or text[0:1].isdigit():
-            # Save the previous question's options and add a new question
-            if current_question and current_options:
-                current_question, current_options, highlights = process_options(current_question, current_options, highlights, selected_options, question_numbers)
-                question_numbers+=1                
+        if is_question(text):
+            
+            if current_question and len(current_options) > 0:
+                current_question, current_options = process_options(current_question, current_options, selected_options, question_numbers)
+                question_numbers += 1
                 create_quiz(data, current_question, current_options, highlights, platform)
             current_question = text
-            current_options = []  # Clear the options list for the new question
-
-        # Add the options
+            current_options.clear()  # Clear the options list for the new questions
         elif is_option(text):
-            # Split the options if multiple are on the same line
             for option in split_options(text):
                 current_options.append(option)
-
-    # Add the last question if it exists
-    question_numbers = lastQuestion(current_question, current_options, highlights, data, platform, selected_options, question_numbers)
+    # Process the last question
+    question_numbers = last_question(current_question, current_options, highlights, data, platform, selected_options, question_numbers)
     return question_numbers
 
-# Add the last question and create a quiz
-def lastQuestion(current_question, current_options, highlights, data, platform, selected_options, question_numbers):
-    if current_question and current_options:
-        question_numbers+=1
-        current_question, current_options, highlights = process_options(current_question, current_options, highlights, selected_options, question_numbers)
-        create_quiz(data, current_question, current_options, highlights, platform)
-        return question_numbers
-
-# Create a DataFrame from the extracted data and save it as an Excel file
-def dataFrame(data, file_path, selected_options):
-    df = pd.DataFrame(data)
-    if "Xáo trộn câu hỏi" in selected_options:
-        df = df.sample(frac=1)  # frac=1 shuffles all rows randomly
-    # Get the file name without extension
-    file_name = path.splitext(path.basename(rf'{file_path}'))[0] + ".xlsx"    
-    try:
-        close_excel(rf"{file_path}")
-        df.to_excel(file_name, index=False)
-        startfile(file_name)
-        Popen(rf'explorer /select,"{file_name}"')
-    except Exception:
-        pass

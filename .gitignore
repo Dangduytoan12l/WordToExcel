@@ -15,4 +15,10 @@ __pycache__
 # Extension files #
 ###################
 settings.json
-Docx/~$*
+test.py
+WordToExcel.spec
+.gitignore
+# Folder #
+###################
+Output
+Docx
