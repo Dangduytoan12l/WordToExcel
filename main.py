@@ -143,5 +143,3 @@ def question_create(doc, current_question: str, current_options: list, highlight
     question_numbers = last_question(current_question, current_options, highlights, data, platform, selected_options, question_numbers)
     return question_numbers
 
-# Function to create an Excel data frame
-

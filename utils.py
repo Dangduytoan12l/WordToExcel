@@ -189,12 +189,12 @@ def get_explorer_windows(target_path):
             try:
                 window_path = window.Document.Folder.Self.Path
                 if window_path.lower() == target_path.lower():
-                    hwnd = window.HWND
                     return True
             except Exception as e:
                 print(f"Error accessing window's path: {e}")
     return None
 
+# Create excel file
 def data_frame(data: list, file_path: str, selected_options: list, open_file: bool = True) -> None:
     """
     Convert a list of data into a DataFrame, optionally random rows, and save it as an Excel file.
