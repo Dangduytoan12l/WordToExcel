@@ -2,7 +2,6 @@ import os
 import re
 import docx
 import pypandoc
-import pandas as pd
 import win32com.client as win32
 from pdf2docx import Converter
 from win32com.client import constants
@@ -50,12 +49,16 @@ def format_file(file_path: str, del_list: list) -> tuple:
         highlights = []
         opt_highlights = []
         document = docx.Document(file_path)
+        
         #Append the highlighted text
         for paragraph in document.paragraphs:
             highlighted_text = extract_format_text(paragraph)
+            match = re.match(r'^([a-dA-D])\.', highlighted_text)
             if is_option(highlighted_text): 
-                highlights.append(CFL(highlighted_text))
-        return highlights
+                highlights.append(CFL(re.sub(r'^[a-dA-D]\.', '', highlighted_text).strip()))
+                opt_highlights.append(CFL(match.group(1)))
+        if(len(highlights)>len(opt_highlights)): return highlights
+        else: return opt_highlights
 
     # Split the file path into name and extension
     name, ext = os.path.splitext(os.path.basename(file_path))
@@ -135,35 +138,9 @@ def question_create(doc, current_question: str, current_options: list, highlight
         elif is_option(text):
             for option in split_options(text):
                 current_options.append(option)
-
+    # Process the last question
     question_numbers = last_question(current_question, current_options, highlights, data, platform, selected_options, question_numbers)
-    # Function to process the last question
-
     return question_numbers
 
 # Function to create an Excel data frame
-def data_frame(data: list, file_path: str, selected_options: list, open_file: bool = True) -> None:
-    """
-    Convert a list of data into a DataFrame, optionally random rows, and save it as an Excel file.
 
-    Args:
-        data (list): The data to be converted into a DataFrame.
-        file_path (str): The path to the input file for naming the output Excel file.
-        selected_options (list): A list of options that may include "Shuffle questions" to shuffle rows.
-        open_file (bool, optional): Whether to open the output file after saving. Defaults to True.
-    """
-    output_directory = "Output"
-    os.makedirs(output_directory, exist_ok=True)
-    
-    file_name = os.path.splitext(os.path.basename(file_path))[0] + ".xlsx"
-    output_path = os.path.join(output_directory, file_name)
-    
-    df = pd.DataFrame(data)
-    
-    if "Xáo trộn câu hỏi" in selected_options:
-        df = df.sample(frac=1)
-    
-    df.to_excel(output_path, index=False)
-    
-    if open_file:
-        os.startfile(output_path)

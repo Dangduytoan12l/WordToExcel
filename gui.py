@@ -2,14 +2,13 @@ import os
 import docx
 import tkinter as tk
 from subprocess import Popen, PIPE
-from utils import close_excel, open_folder
-from main import question_create, data_frame, format_file
+from utils import close_excel, open_folder, data_frame, get_explorer_windows
+from main import question_create, format_file
 
 def run() -> None:
     """
     Execute the main processing logic for converting Word documents into quiz data.
     """
-    var = False
     # Step 1: Get selected file paths
     file_paths = open_folder()
 
@@ -58,9 +57,11 @@ def run() -> None:
     for temp_file in del_list:
         os.remove(temp_file)
 
+    output_path = os.path.abspath("Output")
     # Step 8: Open output directory
-    process = Popen(['explorer', "Output"], stdout=PIPE, stderr=PIPE)
-    stdout, stderr = process.communicate()
+    if not get_explorer_windows(output_path):
+        process = Popen(['explorer', "Output"], stdout=PIPE, stderr=PIPE)
+        stdout, stderr = process.communicate()
     status_label.config(text="Chuyển đổi thành công!", fg="green")
 
 # Create the main window

@@ -1,5 +1,8 @@
+import os
 import re
 import subprocess
+import win32com.client
+import pandas as pd
 from tkinter.filedialog import askopenfilenames
 
 # Helper function to open a window that specifies a file's path
@@ -40,7 +43,9 @@ def extract_format_text(text: str) -> str:
     """Extracts formatted text (highlighted, bold, underline, italic) if not return empty string"""
     format_text = ""
     for run in text.runs:
-        if run.font.highlight_color or run.font.bold or run.font.underline:
+        if run.font.highlight_color and run.font.bold or run.font.bold and run.font.underline or run.font.highlight_color and run.font.bold:
+            format_text += run.text
+        elif run.font.highlight_color or run.font.bold or run.font.underline:
             format_text += run.text
     return format_text
 
@@ -60,6 +65,7 @@ def get_correct_answer_index(options: list, highlights: list) -> int:
         option_text
         try:
             if option_text == highlights[0] or option_text[0] == highlights[0]:
+                print(option_text)
                 highlights.pop(0)
                 return index+1
         except Exception:
@@ -175,6 +181,46 @@ def process_options(current_question: str, current_options: list, selected_optio
 
     return current_question, current_options
 
+def get_explorer_windows(target_path):
+    """Find an Explorer window by a given path and bring it to the foreground."""
+    shell_windows = win32com.client.Dispatch("Shell.Application").Windows()
+    for window in shell_windows:
+        # Only consider windows that are instances of File Explorer
+        if window.Name == "File Explorer":
+            try:
+                window_path = window.Document.Folder.Self.Path
+                if window_path.lower() == target_path.lower():
+                    hwnd = window.HWND
+                    return True
+            except Exception as e:
+                print(f"Error accessing window's path: {e}")
+    return None
+
+def data_frame(data: list, file_path: str, selected_options: list, open_file: bool = True) -> None:
+    """
+    Convert a list of data into a DataFrame, optionally random rows, and save it as an Excel file.
+
+    Args:
+        data (list): The data to be converted into a DataFrame.
+        file_path (str): The path to the input file for naming the output Excel file.
+        selected_options (list): A list of options that may include "Shuffle questions" to shuffle rows.
+        open_file (bool, optional): Whether to open the output file after saving. Defaults to True.
+    """
+    output_directory = "Output"
+    os.makedirs(output_directory, exist_ok=True)
+    
+    file_name = os.path.splitext(os.path.basename(file_path))[0] + ".xlsx"
+    output_path = os.path.join(output_directory, file_name)
+    
+    df = pd.DataFrame(data)
+    
+    if "Xáo trộn câu hỏi" in selected_options:
+        df = df.sample(frac=1)
+    
+    df.to_excel(output_path, index=False)
+    
+    if open_file:
+        os.startfile(output_path)
 def close_excel():
     """Close all instances of excel"""
     # Closes an Excel application if it is open.
