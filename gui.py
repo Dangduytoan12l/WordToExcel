@@ -111,10 +111,8 @@ def update_checkboxes()-> None:
     
     if curr and checkboxes["Xóa chữ 'Câu'"].get():
         checkboxes["Thêm chữ 'Câu'"].set(False)
-    if not curr and checkboxes["Xóa chữ 'Câu'"].get():
+    if not curr and next and checkboxes["Thêm chữ 'Câu'"].get():
         checkboxes["Xóa chữ 'Câu'"].set(False)
-    if not curr and not next and not checkboxes["Thêm chữ 'Câu'"].get():
-        checkboxes["Xóa chữ 'Câu'"].set(True)
     curr = checkboxes["Thêm chữ 'Câu'"].get()
     next = checkboxes["Xóa chữ 'Câu'"].get()
 
