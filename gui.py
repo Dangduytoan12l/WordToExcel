@@ -5,10 +5,8 @@ from subprocess import Popen, PIPE
 from utils import close_excel, open_folder, data_frame, get_explorer_windows
 from main import question_create, format_file
 
-def run() -> None:
-    """
-    Execute the main processing logic for converting Word documents into quiz data.
-    """
+def run():
+    """Execute the main processing logic for converting Word documents into quiz data."""
     # Step 1: Get selected file paths
     file_paths = open_folder()
 
@@ -108,9 +106,7 @@ checkboxes = {}
 
 curr, next = False, False
 def update_checkboxes()-> None:
-    """
-    Function to make sure that only one checkbox can be selected at the same time.
-    """
+    """Function to make sure that only one checkbox can be selected at the same time."""
     global curr, next
     
     if curr and checkboxes["Xóa chữ 'Câu'"].get():

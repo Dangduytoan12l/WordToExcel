@@ -7,13 +7,13 @@ from tkinter.filedialog import askopenfilenames
 
 # Helper function to open a window that specifies a file's path
 def open_folder():
-    """Opens a file dialog to select multiple files"""
+    """Opens a file dialog to select multiple files."""
     filepaths = askopenfilenames()
     return filepaths
 
 # Capitalize first letter
 def CFL(text: str) -> str:
-    """Capitalize the first letter of the string"""
+    """Capitalize the first letter of the string."""
     if text:
         return text[0].upper() + text[1:]
     else:
@@ -39,7 +39,7 @@ def split_options(text: str) -> list:
 
 
 def extract_format_text(text: str) -> str:
-    """Extracts formatted text (highlighted, bold, underline, italic) if not return empty string"""
+    """Extracts formatted text (highlighted, bold, underline, italic) if not return empty string."""
     format_text = ""
     for run in text.runs:
         if run.font.highlight_color and run.font.bold or run.font.bold and run.font.underline or run.font.highlight_color and run.font.bold:
@@ -50,14 +50,7 @@ def extract_format_text(text: str) -> str:
 
 #Get the correct answer index and remove that answer to optimze the performance
 def get_correct_answer_index(options: list, highlights: list) -> int:
-    """
-    Find and return the index of the correct answer in a list of answer options based on highlighted text.
-
-    Args:
-        `options`: A list of answer options, each possibly prefixed with an answer choice indicator (e.g., "A.", "B.",...).
-        `highlights`: A list of highlighted text indicating the correct answer.
-    Returns: The index of the answer
-    """
+    """Find and return the index of the correct answer in a list of answer options based on highlighted text.    """
 
     # Gets the index of the correct answer from options based on highlighted text.
     for index, option_text in enumerate(options):
@@ -72,14 +65,7 @@ def get_correct_answer_index(options: list, highlights: list) -> int:
     return None
 
 def create_quiz(data: list, current_question: str, current_options: list, highlights: list, platform: str) -> None:
-    """Create a Quiz Question based on the specified platform.
-    Args:
-        `data`: The data list to process.
-        `current_question`: The question text.
-        `current_options`: The list of current_option.
-        `highlights`: The highlights list indicating the correct answer.
-        `platform`: The selected platform.
-    """
+    """Create a Quiz Question based on the specified platform."""
     # Creates a question based on the specified platform and adds it to the data list.
     def quizizz(data: list, current_question: str, current_options: list, highlights: list) -> list:
         # Creates a Quizizz-style question and adds it to the data list.
@@ -131,18 +117,8 @@ def create_quiz(data: list, current_question: str, current_options: list, highli
 
 def process_options(current_question: str, current_options: list, selected_options:list, question_number: int) -> None:
     """Process and Format Questions and Answer Options.
-
     This function processes and formats question text and answer options based on selected formatting options 
     and the question number.
-
-    Args:
-        `current_question`(str): The current question text.
-        `current_options`(list): A list of answer options.
-        `selected_options`(list): A list of selected formatting options.
-        `question_number`(int): The current question number.
-
-    Returns:
-        The current question and the current options.
     """
 
     pattern = r'Câu (\d+)'
@@ -191,20 +167,12 @@ def get_explorer_windows(target_path):
                 if window_path.lower() == target_path.lower():
                     return True
             except Exception as e:
-                print(f"Error accessing window's path: {e}")
+                pass
     return None
 
 # Create excel file
 def data_frame(data: list, file_path: str, selected_options: list, open_file: bool = True) -> None:
-    """
-    Convert a list of data into a DataFrame, optionally random rows, and save it as an Excel file.
-
-    Args:
-        data (list): The data to be converted into a DataFrame.
-        file_path (str): The path to the input file for naming the output Excel file.
-        selected_options (list): A list of options that may include "Shuffle questions" to shuffle rows.
-        open_file (bool, optional): Whether to open the output file after saving. Defaults to True.
-    """
+    """Convert a list of data into a DataFrame, optionally random rows, and save it as an Excel file."""
     output_directory = "Output"
     os.makedirs(output_directory, exist_ok=True)
     
@@ -221,6 +189,6 @@ def data_frame(data: list, file_path: str, selected_options: list, open_file: bo
     if open_file:
         os.startfile(output_path)
 def close_excel():
-    """Close all instances of excel"""
+    """Close all instances of excel."""
     # Closes an Excel application if it is open.
     subprocess.call("TASKKILL /F /IM EXCEL.EXE > nul 2>&1", shell=True)

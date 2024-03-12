@@ -11,17 +11,7 @@ from utils import CFL, create_quiz, extract_format_text, is_option, is_question,
 def format_file(file_path: str, del_list: list) -> tuple:
     """
     Format a document file to DOCX, extract formatted text, and return relevant information.
-
-    Args:
-        `file_path` (str): The path to the input document file (can be in DOC, DOCX, or PDF format).
-        `del_list` (list): A list of file paths to delete after processing.
-
-    Returns:
-        Tuple[str, list, list]: A tuple containing:
-            - A string representing the absolute path to the formatted DOCX file.
-            - A list of extracted highlights and formatted text.
-            - A list of file paths to delete after processing.
-
+    
     The extracted highlights are based on specific formatting rules within the document.
     """
     def convert_to_docx(file_path_convert: str, name: str, del_list: list) -> list:
@@ -105,20 +95,7 @@ def format_file(file_path: str, del_list: list) -> tuple:
 def question_create(doc, current_question: str, current_options: list, highlights: list, data: list, platform: str, selected_options: list, question_numbers: int) -> int:
     """
     Process a document to create quiz questions and options based on specific formatting.
-
-    Args:
-        `doc`: The document to process, typically a collection of paragraphs.
-        `current_question` (str): The current question text.
-        `current_options` (list): A list of current answer options.
-        `highlights` (list): A list of highlighted text indicating correct answers.
-        `data` (list): The data list to which quiz questions and options will be added.
-        `platform` (str): The selected platform for the quiz.
-        `selected_options` (list): The selected options for quiz formatting.
-        `question_numbers` (int): The current question number being processed.
-
-    Returns:
-        int: The updated question number after processing.
-    Note: The document structure and formatting rules must align with the processing logic for accurate results.
+    The document structure and formatting rules must align with the processing logic for accurate results.
     """
     def last_question(current_question: str, current_options: list, highlights: list, data: list, platform: str, selected_options: list, question_numbers: int) -> int:
         if current_question and len(current_options) > 0:
