@@ -57,6 +57,7 @@ def format_file(file_path: str, del_list: list) -> tuple:
             if is_option(highlighted_text): 
                 highlights.append(CFL(re.sub(r'^[a-dA-D]\.', '', highlighted_text).strip()))
                 opt_highlights.append(CFL(match.group(1)))
+                
         if(len(highlights)>len(opt_highlights)): return highlights
         else: return opt_highlights
 

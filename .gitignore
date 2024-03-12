@@ -15,7 +15,7 @@ __pycache__
 # Extension files #
 ###################
 settings.json
-
+test.py
 WordToExcel.spec
 .gitignore
 # Folder #
