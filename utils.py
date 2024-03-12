@@ -22,7 +22,6 @@ def CFL(text: str) -> str:
 # Helper function to check whether a text is a question
 def is_question(text: str) -> bool:
     """Check if a text is a question."""
-    prefixes = ("Câu", "câu", '1', '2', '3', '4', '5', '6', '7', '8', '9')
     regex_pattern = r"\b(?:Câu|câu|\d+)\b|\b(?:\d+)\."
     regex = re.compile(regex_pattern)
     return bool(regex.match(text))
