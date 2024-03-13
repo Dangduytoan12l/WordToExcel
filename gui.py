@@ -9,15 +9,15 @@ def select_platform():
     """Create a new tkinter window to select the answer format"""
 
     window_platform = tk.Toplevel(window)  # Use Toplevel for a new window
-    window_platform.title("Select Platform")
-    window_platform.geometry("250x180")
+    window_platform.title("Đáp án")
+    window_platform.geometry("300x180")
 
-    answer_formats = ["Bôi màu","Bôi đen", "In nghiêng", "Gạch chân"]
+    answer_formats = ["Bôi màu","Bôi đen", "In nghiêng", "Gạch chân","A,B,C,D","Chữ"]
 
     answer_var = tk.StringVar()
     answer_var.set(answer_formats[0])  # Setting default option
 
-    platform_label = tk.Label(window_platform, text="Select Answer Format:", font=("Helvetica", 12))
+    platform_label = tk.Label(window_platform, text="Đáp án được định dạng:", font=("Helvetica", 12))
     platform_label.grid(row=0, column=0, columnspan=3, pady=10)
     global ans_checkboxes
     ans_checkboxes = {}  # Dictionary to hold checkbox variables
@@ -27,9 +27,10 @@ def select_platform():
         var = tk.BooleanVar()
         ans_checkboxes[answer_format] = var
         checkbox = tk.Checkbutton(window_platform, text=answer_format, variable=var, anchor="w")
-        checkbox.grid(row=1 + (i // 2), column=i % 2, pady=10, padx=10, sticky="w")
+        checkbox.grid(row=1 + (i // 3), column=i % 3, pady=10, padx=10, sticky="w")
     ans_checkboxes["Bôi đen"].set(True)
-    # ans_checkboxes["Chữ"].set(True)
+    ans_checkboxes["Chữ"].set(True)
+
     # Function to handle the selection and close the window
     def on_select_button_click():
         selected_formats = [format for format, var in ans_checkboxes.items() if var.get()]

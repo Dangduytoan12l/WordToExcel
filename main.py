@@ -36,7 +36,6 @@ def format_file(file_path: str, del_list: list, selected_options: list) -> tuple
     # Function to extract formatted text
     def extract_original_format(file_path: str, selected_options: list) -> list:
         highlights = []
-        opt_highlights = []
         document = docx.Document(file_path)
         
         #Append the highlighted text
@@ -44,11 +43,11 @@ def format_file(file_path: str, del_list: list, selected_options: list) -> tuple
             highlighted_text = extract_format_text(paragraph, selected_options)
             match = re.match(r'^([a-dA-D])\.', highlighted_text)
             if is_option(highlighted_text): 
-                highlights.append(CFL(re.sub(r'^[a-dA-D]\.', '', highlighted_text).strip()))
-                opt_highlights.append(CFL(match.group(1)))
-                
-        if(len(highlights)>len(opt_highlights)): return highlights
-        else: return opt_highlights
+                if "A,B,C,D" in selected_options:
+                    highlights.append(CFL(match.group(1)))
+                elif "Chữ" in selected_options:
+                    highlights.append(CFL(re.sub(r'^[a-dA-D]\.', '', highlighted_text).strip()))
+        return highlights
 
     # Split the file path into name and extension
     name, ext = os.path.splitext(os.path.basename(file_path))
@@ -100,7 +99,7 @@ def question_create(doc, current_question: str, current_options: list, highlight
         if current_question and len(current_options) > 0:
             question_numbers += 1
             current_question, current_options = process_options(current_question, current_options, selected_options, question_numbers)
-            create_quiz(data, current_question, current_options, highlights, platform)
+            create_quiz(data, current_question, current_options, highlights, platform, selected_options)
         return question_numbers
     for paragraph in doc.paragraphs:
         text = paragraph.text.strip()
@@ -109,7 +108,7 @@ def question_create(doc, current_question: str, current_options: list, highlight
             if current_question and len(current_options) > 0:
                 current_question, current_options = process_options(current_question, current_options, selected_options, question_numbers)
                 question_numbers += 1
-                create_quiz(data, current_question, current_options, highlights, platform)
+                create_quiz(data, current_question, current_options, highlights, platform, selected_options)
             current_question = text
             current_options.clear()  # Clear the options list for the new questions
         elif is_option(text):
