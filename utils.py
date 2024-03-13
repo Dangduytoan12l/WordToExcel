@@ -38,14 +38,23 @@ def split_options(text: str) -> list:
         return re.split(r'\s+(?=[a-dA-D]\.)', text, flags=re.IGNORECASE)
 
 
-def extract_format_text(text: str) -> str:
+def extract_format_text(text: str, selected_options: list) -> str:
     """Extracts formatted text (highlighted, bold, underline, italic) if not return empty string."""
     format_text = ""
+    
+    formatting_conditions = {
+        ("Bôi đen",): lambda run: run.font.bold,
+        ("In nghiêng",): lambda run: run.font.italic,
+        ("Gạch chân",): lambda run: run.font.underline,
+        ("Bôi màu",): lambda run: run.font.highlight_color,
+    }
+    
     for run in text.runs:
-        if run.font.highlight_color and run.font.bold or run.font.bold and run.font.underline or run.font.highlight_color and run.font.bold:
-            format_text += run.text
-        elif run.font.highlight_color or run.font.bold or run.font.underline:
-            format_text += run.text
+        for options, condition in formatting_conditions.items():
+            if all(option in selected_options for option in options) and condition(run):
+                format_text += run.text
+                break
+    
     return format_text
 
 #Get the correct answer index and remove that answer to optimze the performance
@@ -57,7 +66,6 @@ def get_correct_answer_index(options: list, highlights: list) -> int:
         option_text
         try:
             if option_text == highlights[0] or option_text[0] == highlights[0]:
-                print(option_text)
                 highlights.pop(0)
                 return index+1
         except Exception:
@@ -120,7 +128,7 @@ def process_options(current_question: str, current_options: list, selected_optio
     This function processes and formats question text and answer options based on selected formatting options 
     and the question number.
     """
-
+    
     pattern = r'Câu (\d+)'
     match = re.search(pattern, current_question)
     r_match_1 = re.search(r'^Câu (\d+)\.', current_question)
@@ -188,6 +196,7 @@ def data_frame(data: list, file_path: str, selected_options: list, open_file: bo
     
     if open_file:
         os.startfile(output_path)
+        
 def close_excel():
     """Close all instances of excel."""
     # Closes an Excel application if it is open.

@@ -1,10 +1,61 @@
 import os
 import docx
 import tkinter as tk
-from subprocess import Popen, PIPE
+from subprocess import Popen
 from utils import close_excel, open_folder, data_frame, get_explorer_windows
 from main import question_create, format_file
 
+def select_platform():
+    """Create a new tkinter window to select the answer format"""
+
+    window_platform = tk.Toplevel(window)  # Use Toplevel for a new window
+    window_platform.title("Select Platform")
+    window_platform.geometry("250x180")
+
+    answer_formats = ["Bôi màu","Bôi đen", "In nghiêng", "Gạch chân"]
+
+    answer_var = tk.StringVar()
+    answer_var.set(answer_formats[0])  # Setting default option
+
+    platform_label = tk.Label(window_platform, text="Select Answer Format:", font=("Helvetica", 12))
+    platform_label.grid(row=0, column=0, columnspan=3, pady=10)
+    global ans_checkboxes
+    ans_checkboxes = {}  # Dictionary to hold checkbox variables
+
+    # Create checkboxes for each answer format
+    for i, answer_format in enumerate(answer_formats):
+        var = tk.BooleanVar()
+        ans_checkboxes[answer_format] = var
+        checkbox = tk.Checkbutton(window_platform, text=answer_format, variable=var, anchor="w")
+        checkbox.grid(row=1 + (i // 2), column=i % 2, pady=10, padx=10, sticky="w")
+    ans_checkboxes["Bôi đen"].set(True)
+    # ans_checkboxes["Chữ"].set(True)
+    # Function to handle the selection and close the window
+    def on_select_button_click():
+        selected_formats = [format for format, var in ans_checkboxes.items() if var.get()]
+        if selected_formats:
+            answer_var.set(selected_formats[0])  # Set the selected format
+            window_platform.destroy()  # Close the window
+            run()  # Proceed with the main processing logic
+
+    select_button = tk.Button(window_platform, text="Select", command=on_select_button_click)
+    select_button.grid(row=3, column=1, pady=10)
+
+    # Make sure to run the on_platform_selected function when closing the window
+
+
+curr, next = False, False
+def update_checkboxes()-> None:
+    """Function to make sure that only one checkbox can be selected at the same time."""
+    global curr, next
+    
+    if curr and checkboxes["Xóa chữ 'Câu'"].get():
+        checkboxes["Thêm chữ 'Câu'"].set(False)
+    if not curr and next and checkboxes["Thêm chữ 'Câu'"].get():
+        checkboxes["Xóa chữ 'Câu'"].set(False)
+    curr = checkboxes["Thêm chữ 'Câu'"].get()
+    next = checkboxes["Xóa chữ 'Câu'"].get()
+    
 def run():
     """Execute the main processing logic for converting Word documents into quiz data."""
     # Step 1: Get selected file paths
@@ -17,7 +68,7 @@ def run():
     # Step 2: Get platform and selected options
     platform = platform_selection.get()
     selected_options = [option for option, var in checkboxes.items() if var.get()]
-
+    selected_options.extend([ans for ans, var in ans_checkboxes.items() if var.get()])
     # Step 3: Initialize data collection
     all_data = []
     del_list = []
@@ -33,7 +84,7 @@ def run():
         current_options = []
 
         # Convert .doc to .docx if needed and get the new .docx file path
-        path, highlights, del_list = format_file(file_path, del_list)
+        path, highlights, del_list = format_file(file_path, del_list, selected_options)
         if path is False:
             status_label.config(text="Lỗi định dạng file, vui lòng chọn file Word!", fg="red")
             break
@@ -58,8 +109,7 @@ def run():
     output_path = os.path.abspath("Output")
     # Step 8: Open output directory
     if not get_explorer_windows(output_path):
-        process = Popen(['explorer', "Output"], stdout=PIPE, stderr=PIPE)
-        stdout, stderr = process.communicate()
+        Popen(['explorer', "Output"], stdout=-1, stderr=-1)
     status_label.config(text="Chuyển đổi thành công!", fg="green")
 
 # Create the main window
@@ -82,7 +132,7 @@ window.iconphoto(False, p1)
 header_label = tk.Label(main_frame, text="Convert Word to Excel", font=("Helvetica", 16))
 header_label.grid(row=0, column=0, columnspan=3, pady=10)
 # File selection button
-file_button = tk.Button(main_frame, text="Select Word Document", command=run)
+file_button = tk.Button(main_frame, text="Select Word Document", command=select_platform)
 file_button.grid(row=1, column=0, columnspan=3, pady=10)
 
 # Platform radio buttons
@@ -104,17 +154,6 @@ platform_blooket.grid(row=2, column=2, pady=10, padx=10, sticky="w")
 checkbox_options = ["Xóa chữ 'Câu'", "Thêm chữ 'Câu'", "Sửa lỗi định dạng","Xóa chữ 'A,B,C,D'", "Xáo trộn câu hỏi", "Gộp nhiều tệp thành một"]
 checkboxes = {}
 
-curr, next = False, False
-def update_checkboxes()-> None:
-    """Function to make sure that only one checkbox can be selected at the same time."""
-    global curr, next
-    
-    if curr and checkboxes["Xóa chữ 'Câu'"].get():
-        checkboxes["Thêm chữ 'Câu'"].set(False)
-    if not curr and next and checkboxes["Thêm chữ 'Câu'"].get():
-        checkboxes["Xóa chữ 'Câu'"].set(False)
-    curr = checkboxes["Thêm chữ 'Câu'"].get()
-    next = checkboxes["Xóa chữ 'Câu'"].get()
 
 for i, option_text in enumerate(checkbox_options):
     var = tk.BooleanVar()

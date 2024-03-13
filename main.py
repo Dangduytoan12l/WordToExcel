@@ -8,10 +8,9 @@ from win32com.client import constants
 from utils import CFL, create_quiz, extract_format_text, is_option, is_question, process_options, split_options
 
 # Function to convert .doc to .docx
-def format_file(file_path: str, del_list: list) -> tuple:
+def format_file(file_path: str, del_list: list, selected_options: list) -> tuple:
     """
     Format a document file to DOCX, extract formatted text, and return relevant information.
-    
     The extracted highlights are based on specific formatting rules within the document.
     """
     def convert_to_docx(file_path_convert: str, name: str, del_list: list) -> list:
@@ -35,14 +34,14 @@ def format_file(file_path: str, del_list: list) -> tuple:
         return del_list
 
     # Function to extract formatted text
-    def extract_original_format(file_path: str) -> list:
+    def extract_original_format(file_path: str, selected_options: list) -> list:
         highlights = []
         opt_highlights = []
         document = docx.Document(file_path)
         
         #Append the highlighted text
         for paragraph in document.paragraphs:
-            highlighted_text = extract_format_text(paragraph)
+            highlighted_text = extract_format_text(paragraph, selected_options)
             match = re.match(r'^([a-dA-D])\.', highlighted_text)
             if is_option(highlighted_text): 
                 highlights.append(CFL(re.sub(r'^[a-dA-D]\.', '', highlighted_text).strip()))
@@ -74,12 +73,12 @@ def format_file(file_path: str, del_list: list) -> tuple:
         # Get the list to delete
         del_list = convert_to_docx(temp_path, name, del_list)
         del_list.append(temp_path)
-        highlights = extract_original_format(temp_path)
+        highlights = extract_original_format(temp_path, selected_options)
         return temp_path, highlights, del_list
 
     elif ext == ".docx":
         del_list = convert_to_docx(abs_file_path, name, del_list)
-        highlights = extract_original_format(file_path)
+        highlights = extract_original_format(file_path, selected_options)
         return temp_path_docx, highlights, del_list   
     
     elif ext == ".pdf":
