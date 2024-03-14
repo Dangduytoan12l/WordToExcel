@@ -41,12 +41,14 @@ def format_file(file_path: str, del_list: list, selected_options: list) -> tuple
         #Append the highlighted text
         for paragraph in document.paragraphs:
             highlighted_text = extract_format_text(paragraph, selected_options)
+            
             match = re.match(r'^([a-dA-D])\.', highlighted_text)
-            if is_option(highlighted_text): 
+            if is_option(highlighted_text) and re.match(r'^[a-dA-D]\.(?=\s|$)(?=.+)',highlighted_text): 
                 if "A,B,C,D" in selected_options:
                     highlights.append(CFL(match.group(1)))
-                elif "Chữ" in selected_options:
+                else:
                     highlights.append(CFL(re.sub(r'^[a-dA-D]\.', '', highlighted_text).strip()))
+                    
         return highlights
 
     # Split the file path into name and extension

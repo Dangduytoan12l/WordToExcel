@@ -12,7 +12,7 @@ def select_platform():
     window_platform.title("Đáp án")
     window_platform.geometry("300x180")
 
-    answer_formats = ["Bôi màu","Bôi đen", "In nghiêng", "Gạch chân","A,B,C,D","Chữ"]
+    answer_formats = ["Bôi màu","Bôi đen", "In nghiêng", "Gạch chân","A,B,C,D"]
 
     answer_var = tk.StringVar()
     answer_var.set(answer_formats[0])  # Setting default option
@@ -29,7 +29,6 @@ def select_platform():
         checkbox = tk.Checkbutton(window_platform, text=answer_format, variable=var, anchor="w")
         checkbox.grid(row=1 + (i // 3), column=i % 3, pady=10, padx=10, sticky="w")
     ans_checkboxes["Bôi đen"].set(True)
-    ans_checkboxes["Chữ"].set(True)
 
     # Function to handle the selection and close the window
     def on_select_button_click():

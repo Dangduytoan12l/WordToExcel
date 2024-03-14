@@ -68,7 +68,7 @@ def get_correct_answer_index(options: list, highlights: list, selected_options: 
                 if option_text[0] == highlights[0]:
                     highlights.pop(0)
                     return index+1
-            elif "Chữ" in selected_options:
+            else:
                 option_text = CFL(re.sub(r'^[a-dA-D]\.', '', option_text).strip())
                 if option_text == highlights[0]:
                     highlights.pop(0)
