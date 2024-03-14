@@ -53,42 +53,42 @@ def format_file(file_path: str, del_list: list, selected_options: list) -> tuple
 
     # Split the file path into name and extension
     name, ext = os.path.splitext(os.path.basename(file_path))
-    temp_name = f"wteDocTemp{name}"
-    temp_path = os.path.abspath(f"wteDocTemp{name}.docx")
-    temp_path_docx = f"wteTemp{name}.docx"
     abs_file_path = os.path.abspath(file_path)
-    new_abs_file_path = os.path.splitext(abs_file_path)[0] + '.docx'
-    # If the extension is .doc change it into .docx and do the same as .docx
+    
     if ext == ".doc":
-
+        # Convert .doc to .docx
+        temp_name = f"wteDocTemp{name}"
+        temp_path = os.path.abspath(f"wteDocTemp{name}.docx")
         
-        # Opening MS Word
         word = win32.gencache.EnsureDispatch('Word.Application')
         doc = word.Documents.Open(abs_file_path)
         doc.Activate()
         
-        # Save and Close
         word.ActiveDocument.SaveAs(temp_name, FileFormat=constants.wdFormatXMLDocument)
         doc.Close(False)
         
-        # Get the list to delete
         del_list = convert_to_docx(temp_path, name, del_list)
         del_list.append(temp_path)
         highlights = extract_original_format(temp_path, selected_options)
+        
         return temp_path, highlights, del_list
 
     elif ext == ".docx":
         del_list = convert_to_docx(abs_file_path, name, del_list)
         highlights = extract_original_format(file_path, selected_options)
-        return temp_path_docx, highlights, del_list   
+        return abs_file_path, highlights, del_list   
     
     elif ext == ".pdf":
+        # Convert .pdf to .docx
+        new_abs_file_path = os.path.splitext(abs_file_path)[0] + '.docx'
         cv = Converter(abs_file_path)
         cv.convert(new_abs_file_path, start=0, end=None)
         cv.close()
+        
         del_list = convert_to_docx(new_abs_file_path, name, del_list)
         highlights = extract_original_format(new_abs_file_path)
         return new_abs_file_path, highlights, del_list
+    
     return False, None, None
 
 # Function to process questions and options
@@ -106,7 +106,7 @@ def question_create(doc, current_question: str, current_options: list, highlight
     for paragraph in doc.paragraphs:
         text = paragraph.text.strip()
         if is_question(text):
-            
+            print(text)
             if current_question and len(current_options) > 0:
                 current_question, current_options = process_options(current_question, current_options, selected_options, question_numbers)
                 question_numbers += 1

@@ -90,6 +90,7 @@ def run():
             break
 
         doc = docx.Document(path)
+        print(path)
         question_numbers = question_create(doc, current_question, current_options, highlights, data, platform, selected_options, question_numbers)
 
         if "Gộp nhiều tệp thành một" not in selected_options:
@@ -103,8 +104,8 @@ def run():
         data_frame(all_data, "Merged_File.xlsx", selected_options, open_file=True)
 
     # Step 7: Delete temporary files
-    for temp_file in del_list:
-        os.remove(temp_file)
+    # for temp_file in del_list:
+    #     os.remove(temp_file)
 
     output_path = os.path.abspath("Output")
     # Step 8: Open output directory
