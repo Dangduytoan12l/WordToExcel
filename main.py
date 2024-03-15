@@ -47,7 +47,6 @@ def format_file(file_path: str, del_list: list, selected_options: list) -> tuple
             if is_option(highlighted_text):
                 if "A,B,C,D" in selected_options:
                     highlights.append(CFL(match.group(1)))
-                    print(CFL(match.group(1)))
                 elif re.match(r'^[a-dA-D]\.(?=\s|$)(?=.+)',highlighted_text):
                     highlights.append(CFL(re.sub(r'^[a-dA-D]\.', '', highlighted_text).strip()))
         return highlights
