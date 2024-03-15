@@ -44,12 +44,12 @@ def format_file(file_path: str, del_list: list, selected_options: list) -> tuple
             highlighted_text = extract_format_text(paragraph, selected_options)
             
             match = re.match(r'^([a-dA-D])\.', highlighted_text)
-            if is_option(highlighted_text) and re.match(r'^[a-dA-D]\.(?=\s|$)(?=.+)',highlighted_text): 
+            if is_option(highlighted_text):
                 if "A,B,C,D" in selected_options:
                     highlights.append(CFL(match.group(1)))
-                else:
+                    print(CFL(match.group(1)))
+                elif re.match(r'^[a-dA-D]\.(?=\s|$)(?=.+)',highlighted_text):
                     highlights.append(CFL(re.sub(r'^[a-dA-D]\.', '', highlighted_text).strip()))
-                    
         return highlights
 
     # Split the file path into name and extension
@@ -78,7 +78,7 @@ def format_file(file_path: str, del_list: list, selected_options: list) -> tuple
     elif ext == ".docx":
         del_list = convert_to_docx(abs_file_path, name, del_list)
         highlights = extract_original_format(file_path, selected_options)
-        return abs_file_path, highlights, del_list   
+        return temp_path_docx, highlights, del_list   
     
     elif ext == ".pdf":
         # Convert .pdf to .docx
@@ -108,7 +108,6 @@ def question_create(doc, current_question: str, current_options: list, highlight
     for paragraph in doc.paragraphs:
         text = paragraph.text.strip()
         if is_question(text):
-            print(text)
             if current_question and len(current_options) > 0:
                 current_question, current_options = process_options(current_question, current_options, selected_options, question_numbers)
                 question_numbers += 1
