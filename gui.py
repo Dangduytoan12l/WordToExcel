@@ -5,6 +5,7 @@ from subprocess import Popen
 from utils import close_excel, open_folder, data_frame, get_explorer_windows
 from main import question_create, format_file
 
+
 def select_platform():
     """Create a new tkinter window to select the answer format"""
 
@@ -36,6 +37,7 @@ def select_platform():
         if selected_formats:
             answer_var.set(selected_formats[0])  # Set the selected format
             window_platform.destroy()  # Close the window
+            status_label.config(text="Starting processing...",fg="black")
             run()  # Proceed with the main processing logic
 
     select_button = tk.Button(window_platform, text="Select", command=on_select_button_click)
@@ -55,7 +57,8 @@ def update_checkboxes()-> None:
         checkboxes["Xóa chữ 'Câu'"].set(False)
     curr = checkboxes["Thêm chữ 'Câu'"].get()
     next = checkboxes["Xóa chữ 'Câu'"].get()
-    
+
+
 def run():
     """Execute the main processing logic for converting Word documents into quiz data."""
     # Step 1: Get selected file paths
@@ -66,6 +69,7 @@ def run():
         return
 
     # Step 2: Get platform and selected options
+    status_label.config(text="Starting processing...")
     platform = platform_selection.get()
     selected_options = [option for option, var in checkboxes.items() if var.get()]
     selected_options.extend([ans for ans, var in ans_checkboxes.items() if var.get()])
@@ -104,8 +108,8 @@ def run():
         data_frame(all_data, "Merged_File.xlsx", selected_options, open_file=True)
 
     # Step 7: Delete temporary files
-    # for temp_file in del_list:
-    #     os.remove(temp_file)
+    for temp_file in del_list:
+        os.remove(temp_file)
 
     output_path = os.path.abspath("Output")
     # Step 8: Open output directory

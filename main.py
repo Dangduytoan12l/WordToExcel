@@ -14,7 +14,7 @@ def format_file(file_path: str, del_list: list, selected_options: list) -> tuple
     The extracted highlights are based on specific formatting rules within the document.
     """
     def convert_to_docx(file_path_convert: str, name: str, del_list: list) -> list:
-        global temp_name_docx
+        global temp_path_docx
         temp_name = f'wteTemp{name}'
         
         # Load the DOCX document using pypandoc
@@ -30,7 +30,8 @@ def format_file(file_path: str, del_list: list, selected_options: list) -> tuple
         
         document.save(f'{temp_name}.docx')
         os.remove(f'{temp_name}.txt')
-        del_list.append(os.path.abspath(f'{temp_name}.docx'))
+        temp_path_docx = os.path.abspath(f'{temp_name}.docx')
+        del_list.append(temp_path_docx)
         return del_list
 
     # Function to extract formatted text
@@ -66,12 +67,13 @@ def format_file(file_path: str, del_list: list, selected_options: list) -> tuple
         
         word.ActiveDocument.SaveAs(temp_name, FileFormat=constants.wdFormatXMLDocument)
         doc.Close(False)
+        word.Quit()
         
         del_list = convert_to_docx(temp_path, name, del_list)
         del_list.append(temp_path)
         highlights = extract_original_format(temp_path, selected_options)
         
-        return temp_path, highlights, del_list
+        return temp_path_docx, highlights, del_list
 
     elif ext == ".docx":
         del_list = convert_to_docx(abs_file_path, name, del_list)
