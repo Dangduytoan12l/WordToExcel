@@ -1,5 +1,6 @@
 import os
 import re
+import openpyxl
 import subprocess
 import win32com.client
 import pandas as pd
@@ -156,7 +157,7 @@ def process_options(current_question: str, current_options: list, selected_optio
         current_question = CFL(re.sub(r'^Câu \d+\:', '', current_question).strip())
         current_question = CFL(re.sub(r'\d+\.', '', current_question).strip())
 
-    if "Xóa chữ 'A,B,C,D'" in selected_options:
+    if "Xóa chữ 'A,B,C,D'" in selected_options and not "A,B,C,D" in selected_options:
         current_options = [CFL(re.sub(r'^[a-dA-D]\.\s*', '', option).strip()) for option in current_options]
 
     if "Thêm chữ 'Câu'" in selected_options and not "Câu" in current_question:
@@ -198,7 +199,16 @@ def data_frame(data: list, file_path: str, selected_options: list, open_file: bo
         df = df.sample(frac=1)
     
     df.to_excel(output_path, index=False)
-    
+    if "A,B,C,D" in selected_options and "Xóa chữ 'Câu'" in selected_options:
+        case = ("A.","B.","C.","D.","a.","b.","c.","d.")
+        workbook = openpyxl.load_workbook(output_path)
+        worksheet = workbook.active
+        for row in worksheet.iter_rows():
+            for ceil in row:
+                if ceil.value and str(ceil.value).startswith(case):
+                    new_value = ceil.value[2:]
+                    ceil.value = new_value
+        workbook.save(output_path)
     if open_file:
         os.startfile(output_path)
         

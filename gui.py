@@ -94,7 +94,6 @@ def run():
             break
 
         doc = docx.Document(path)
-        print(path)
         question_numbers = question_create(doc, current_question, current_options, highlights, data, platform, selected_options, question_numbers)
 
         if "Gộp nhiều tệp thành một" not in selected_options:
