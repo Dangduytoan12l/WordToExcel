@@ -6,7 +6,7 @@ from utils import close_excel, open_folder, data_frame, get_explorer_windows
 from main import question_create, format_file
 
 
-def select_platform():
+def select_platform() -> None:
     """Create a new tkinter window to select the answer format"""
 
     window_platform = tk.Toplevel(window)  # Use Toplevel for a new window
@@ -20,7 +20,6 @@ def select_platform():
 
     platform_label = tk.Label(window_platform, text="Đáp án được định dạng:", font=("Helvetica", 12))
     platform_label.grid(row=0, column=0, columnspan=3, pady=10)
-    global ans_checkboxes
     ans_checkboxes = {}  # Dictionary to hold checkbox variables
 
     # Create checkboxes for each answer format
@@ -38,7 +37,7 @@ def select_platform():
             answer_var.set(selected_formats[0])  # Set the selected format
             window_platform.destroy()  # Close the window
             status_label.config(text="Starting processing...",fg="black")
-            run()  # Proceed with the main processing logic
+            run(ans_checkboxes)  # Proceed with the main processing logic
 
     select_button = tk.Button(window_platform, text="Select", command=on_select_button_click)
     select_button.grid(row=3, column=1, pady=10)
@@ -59,7 +58,7 @@ def update_checkboxes()-> None:
     next = checkboxes["Xóa chữ 'Câu'"].get()
 
 
-def run():
+def run(ans_checkboxes) -> None:
     """Execute the main processing logic for converting Word documents into quiz data."""
     # Step 1: Get selected file paths
     file_paths = open_folder()
