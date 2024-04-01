@@ -3,7 +3,6 @@ import re
 import docx
 import pypandoc
 import win32com.client as win32
-from pdf2docx import Converter
 from win32com.client import constants
 from utils import CFL, create_quiz, extract_format_text, is_option, is_question, process_options, split_options
 
@@ -48,7 +47,8 @@ def format_file(file_path: str, del_list: list, selected_options: list) -> tuple
                 if "A,B,C,D" in selected_options:
                     highlights.append(CFL(match.group(1)))
                 elif re.match(r'^[a-dA-D]\.(?=\s|$)(?=.+)',highlighted_text):
-                    highlights.append(CFL(re.sub(r'^[a-dA-D]\.', '', highlighted_text).strip()))
+                    print(highlighted_text)
+                    highlights.append(CFL(re.sub(r'^[a-dA-D]\.', '', highlighted_text)))
         return highlights
 
     # Split the file path into name and extension
@@ -79,17 +79,6 @@ def format_file(file_path: str, del_list: list, selected_options: list) -> tuple
         highlights = extract_original_format(file_path, selected_options)
         return temp_path_docx, highlights, del_list   
     
-    elif ext == ".pdf":
-        # Convert .pdf to .docx
-        new_abs_file_path = os.path.splitext(abs_file_path)[0] + '.docx'
-        cv = Converter(abs_file_path)
-        cv.convert(new_abs_file_path, start=0, end=None)
-        cv.close()
-        
-        del_list = convert_to_docx(new_abs_file_path, name, del_list)
-        highlights = extract_original_format(new_abs_file_path)
-        return new_abs_file_path, highlights, del_list
-    
     return False, None, None
 
 # Function to process questions and options
@@ -108,6 +97,7 @@ def question_create(doc, current_question: str, current_options: list, highlight
         text = paragraph.text.strip()
         if is_question(text):
             if current_question and len(current_options) > 0:
+                print(text)
                 current_question, current_options = process_options(current_question, current_options, selected_options, question_numbers)
                 question_numbers += 1
                 create_quiz(data, current_question, current_options, highlights, platform, selected_options)

@@ -180,7 +180,7 @@ def get_explorer_windows(target_path):
                 window_path = window.Document.Folder.Self.Path
                 if window_path.lower() == target_path.lower():
                     return True
-            except Exception as e:
+            except Exception:
                 pass
     return None
 
@@ -200,7 +200,7 @@ def data_frame(data: list, file_path: str, selected_options: list, open_file: bo
     
     df.to_excel(output_path, index=False)
     if "A,B,C,D" in selected_options and "Xóa chữ 'Câu'" in selected_options:
-        case = ("A.","B.","C.","D.","a.","b.","c.","d.")
+        case = (("A.", "B.", "C.", "D.", "a.", "b.", "c.", "d.","A ", "B ", "C ", "D ", "a ", "b ", "c ", "d "))
         workbook = openpyxl.load_workbook(output_path)
         worksheet = workbook.active
         for row in worksheet.iter_rows():

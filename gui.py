@@ -2,6 +2,7 @@ import os
 import docx
 import tkinter as tk
 from subprocess import Popen
+from contextlib import suppress
 from utils import close_excel, open_folder, data_frame, get_explorer_windows
 from main import question_create, format_file
 
@@ -129,7 +130,7 @@ try:
     p1 = tk.PhotoImage(file='logo.png')
 except Exception:
     p1 = tk.PhotoImage(file='Images\logo.png')
-window.iconphoto(False, p1)
+window.iconphoto(True, p1)
 
 # Header label
 header_label = tk.Label(main_frame, text="Convert Word to Excel", font=("Helvetica", 16))
@@ -176,4 +177,4 @@ status_label = tk.Label(main_frame, text="", fg="green")
 status_label.grid(row=5, column=0, columnspan=3, pady=10, padx=10)  # Center the label using "sticky"
 
 # Start the GUI application
-window.mainloop()
+with suppress(KeyboardInterrupt): window.mainloop()
