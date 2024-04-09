@@ -59,13 +59,13 @@ def extract_format_text(text: str, selected_options: list) -> str:
     return format_text
 
 #Get the correct answer index and remove that answer to optimze the performance
-def get_correct_answer_index(options: list, highlights: list, selected_options: list ) -> int:
+def get_correct_answer_index(options: list, highlights: list, contains_ABCD: bool ) -> int:
     """Find and return the index of the correct answer in a list of answer options based on highlighted text.    """
 
     # Gets the index of the correct answer from options based on highlighted text.
     for index, option_text in enumerate(options):
         try:
-            if "A,B,C,D" in selected_options:
+            if contains_ABCD:
                 if option_text[0] == highlights[0]:
                     highlights.pop(0)
                     return index+1
@@ -81,6 +81,9 @@ def get_correct_answer_index(options: list, highlights: list, selected_options: 
 def create_quiz(data: list, current_question: str, current_options: list, highlights: list, platform: str, selected_options: list) -> None:
     """Create a Quiz Question based on the specified platform."""
     # Creates a question based on the specified platform and adds it to the data list.
+    contains_ABCD = False
+    if "A,B,C,D" in selected_options:
+        contains_ABCD = True
     def quizizz(data: list, current_question: str, current_options: list, highlights: list) -> list:
         # Creates a Quizizz-style question and adds it to the data list.
         data.append({
@@ -90,7 +93,7 @@ def create_quiz(data: list, current_question: str, current_options: list, highli
             'Option 2': current_options[1] if len(current_options) > 1 else "",
             'Option 3': current_options[2] if len(current_options) > 2 else "",
             'Option 4': current_options[3] if len(current_options) > 3 else "",
-            'Correct Answer': get_correct_answer_index(current_options, highlights, selected_options),
+            'Correct Answer': get_correct_answer_index(current_options, highlights, contains_ABCD),
             'Time in seconds': 30,
         })
         return data
@@ -104,7 +107,7 @@ def create_quiz(data: list, current_question: str, current_options: list, highli
             'Answer 3': current_options[2] if len(current_options) > 2 else "",
             'Answer 4': current_options[3] if len(current_options) > 3 else "",
             'Time limit': 30,
-            'Correct Answer': get_correct_answer_index(current_options, highlights, selected_options),
+            'Correct Answer': get_correct_answer_index(current_options, highlights, contains_ABCD),
         })
         return data
 
@@ -117,7 +120,7 @@ def create_quiz(data: list, current_question: str, current_options: list, highli
             'Answer 3': current_options[2] if len(current_options) > 2 else "",
             'Answer 4': current_options[3] if len(current_options) > 3 else "",
             'Time limit': 30,
-            'Correct Answer': get_correct_answer_index(current_options, highlights, selected_options),
+            'Correct Answer': get_correct_answer_index(current_options, highlights, contains_ABCD),
         })
         return data
 

@@ -3,7 +3,6 @@ import re
 import docx
 import pypandoc
 import win32com.client as win32
-from win32com.client import constants
 from utils import CFL, create_quiz, extract_format_text, is_option, is_question, process_options, split_options
 
 # Function to convert .doc to .docx
@@ -64,7 +63,7 @@ def format_file(file_path: str, del_list: list, selected_options: list) -> tuple
         doc = word.Documents.Open(abs_file_path)
         doc.Activate()
         
-        word.ActiveDocument.SaveAs(temp_name, FileFormat=constants.wdFormatXMLDocument)
+        word.ActiveDocument.SaveAs(temp_name, FileFormat=win32.constants.wdFormatXMLDocument)
         doc.Close(False)
         word.Quit()
         
@@ -93,7 +92,7 @@ def question_create(doc, current_question: str, current_options: list, highlight
             current_question, current_options = process_options(current_question, current_options, selected_options, question_numbers)
             create_quiz(data, current_question, current_options, highlights, platform, selected_options)
         return question_numbers
-    for paragraph in doc.paragraphs:
+    for index, paragraph in enumerate(doc.paragraphs):
         text = paragraph.text.strip()
         if is_question(text):
             if current_question and len(current_options) > 0:
@@ -102,6 +101,10 @@ def question_create(doc, current_question: str, current_options: list, highlight
                 question_numbers += 1
                 create_quiz(data, current_question, current_options, highlights, platform, selected_options)
             current_question = text
+            line_numbers = 1
+            while not is_option(doc.paragraphs[index + line_numbers].text.strip()):
+                current_question += '\n'+doc.paragraphs[index + line_numbers].text.strip()
+                line_numbers+=1
             current_options.clear()  # Clear the options list for the new questions
         elif is_option(text):
             for option in split_options(text):
