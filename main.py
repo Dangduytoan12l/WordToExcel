@@ -96,14 +96,16 @@ def question_create(doc, current_question: str, current_options: list, highlight
         text = paragraph.text.strip()
         if is_question(text):
             if current_question and len(current_options) > 0:
-                print(text)
                 current_question, current_options = process_options(current_question, current_options, selected_options, question_numbers)
                 question_numbers += 1
                 create_quiz(data, current_question, current_options, highlights, platform, selected_options)
             current_question = text
             line_numbers = 1
-            while not is_option(doc.paragraphs[index + line_numbers].text.strip()):
-                current_question += '\n'+doc.paragraphs[index + line_numbers].text.strip()
+            while not is_option(doc.paragraphs[index + line_numbers].text.strip()) and not is_question(doc.paragraphs[index + line_numbers].text.strip()):
+                next_text = doc.paragraphs[index + line_numbers].text.strip()
+                if next_text: 
+                    current_question += '\n' + next_text
+                    print(next_text)
                 line_numbers+=1
             current_options.clear()  # Clear the options list for the new questions
         elif is_option(text):
