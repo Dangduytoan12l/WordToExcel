@@ -132,7 +132,7 @@ def create_quiz(data: list, current_question: str, current_options: list, highli
         blooket(data, current_question, current_options, highlights)
 
 
-def process_options(current_question: str, current_options: list, selected_options:list, question_number: int) -> None:
+def process_formats(current_question: str, current_options: list, selected_options:list, question_number: int) -> None:
     """Process and Format Questions and Answer Options.
     This function processes and formats question text and answer options based on selected formatting options 
     and the question number.

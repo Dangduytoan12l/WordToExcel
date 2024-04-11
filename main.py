@@ -3,7 +3,7 @@ import re
 import docx
 import pypandoc
 import win32com.client as win32
-from utils import CFL, create_quiz, extract_format_text, is_option, is_question, process_options, split_options
+from utils import CFL, create_quiz, extract_format_text, is_option, is_question, process_formats, split_options
 
 def format_file(file_path: str, del_list: list, selected_options: list) -> tuple:
     """
@@ -87,32 +87,30 @@ def question_create(doc, current_question: str, current_options: list, highlight
     def last_question(current_question: str, current_options: list, highlights: list, data: list, platform: str, selected_options: list, question_numbers: int) -> int:
         if current_question and len(current_options) > 0:
             question_numbers += 1
-            current_question, current_options = process_options(current_question, current_options, selected_options, question_numbers)
+            current_question, current_options = process_formats(current_question, current_options, selected_options, question_numbers)
             create_quiz(data, current_question, current_options, highlights, platform, selected_options)
         return question_numbers
     
     for index, paragraph in enumerate(doc.paragraphs):
         text = paragraph.text.strip()
-        if is_question(text):
+        if is_question(text) and not is_question(doc.paragraphs[index - 1].text.strip()):
+            
             if current_question and len(current_options) > 0:
-                current_question, current_options = process_options(current_question, current_options, selected_options, question_numbers)
+                current_question, current_options = process_formats(current_question, current_options, selected_options, question_numbers)
                 question_numbers += 1
                 create_quiz(data, current_question, current_options, highlights, platform, selected_options)
-
-            line_numbers = 1
-            while index + line_numbers < len(doc.paragraphs) and not is_option(doc.paragraphs[index + line_numbers].text.strip()) and not is_question(doc.paragraphs[index + line_numbers].text.strip()):
-                next_text = doc.paragraphs[index + line_numbers].text.strip()
-                if next_text: 
-                    current_question += '\n' + next_text
-                line_numbers+=1
-                
-            print(current_question)
+               
             current_options.clear()  # Clear the options list for the new questions
             current_question = text
-            
-        elif is_option(text):
-            for option in split_options(text):
-                current_options.append(option)
+        elif current_question:
+            if is_option(text):
+                for option in split_options(text):
+                    current_options.append(option)
+            else: 
+                if text.startswith("[") and text.endswith("]") and text.isupper():
+                    continue
+                elif text.strip(): 
+                    current_question += '\n'+text
     # Process the last question
     question_numbers = last_question(current_question, current_options, highlights, data, platform, selected_options, question_numbers)
     return question_numbers
