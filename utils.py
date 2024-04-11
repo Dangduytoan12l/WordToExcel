@@ -158,7 +158,7 @@ def process_options(current_question: str, current_options: list, selected_optio
     if "Xóa chữ 'Câu'" in selected_options:
         current_question = CFL(re.sub(r'^Câu \d+\.', '', current_question).strip())
         current_question = CFL(re.sub(r'^Câu \d+\:', '', current_question).strip())
-        current_question = CFL(re.sub(r'\d+\.', '', current_question).strip())
+        current_question = CFL(re.sub(r'^\d+\.', '', current_question).strip())
 
     if "Xóa chữ 'A,B,C,D'" in selected_options and not "A,B,C,D" in selected_options:
         current_options = [CFL(re.sub(r'^[a-dA-D]\.\s*', '', option).strip()) for option in current_options]
@@ -203,7 +203,7 @@ def data_frame(data: list, file_path: str, selected_options: list, open_file: bo
     
     df.to_excel(output_path, index=False)
     if "A,B,C,D" in selected_options and "Xóa chữ 'Câu'" in selected_options:
-        case = (("A.", "B.", "C.", "D.", "a.", "b.", "c.", "d.","A ", "B ", "C ", "D ", "a ", "b ", "c ", "d "))
+        case = ("A.", "B.", "C.", "D.", "a.", "b.", "c.", "d.","A ", "B ", "C ", "D ", "a ", "b ", "c ", "d ")
         workbook = openpyxl.load_workbook(output_path)
         worksheet = workbook.active
         for row in worksheet.iter_rows():

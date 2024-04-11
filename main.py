@@ -5,7 +5,6 @@ import pypandoc
 import win32com.client as win32
 from utils import CFL, create_quiz, extract_format_text, is_option, is_question, process_options, split_options
 
-# Function to convert .doc to .docx
 def format_file(file_path: str, del_list: list, selected_options: list) -> tuple:
     """
     Format a document file to DOCX, extract formatted text, and return relevant information.
@@ -46,7 +45,6 @@ def format_file(file_path: str, del_list: list, selected_options: list) -> tuple
                 if "A,B,C,D" in selected_options:
                     highlights.append(CFL(match.group(1)))
                 elif re.match(r'^[a-dA-D]\.(?=\s|$)(?=.+)',highlighted_text):
-                    print(highlighted_text)
                     highlights.append(CFL(re.sub(r'^[a-dA-D]\.', '', highlighted_text)))
         return highlights
 
@@ -66,7 +64,7 @@ def format_file(file_path: str, del_list: list, selected_options: list) -> tuple
         word.ActiveDocument.SaveAs(temp_name, FileFormat=win32.constants.wdFormatXMLDocument)
         doc.Close(False)
         word.Quit()
-        
+        #Delete the temporary .docx file
         del_list = convert_to_docx(temp_path, name, del_list)
         del_list.append(temp_path)
         highlights = extract_original_format(temp_path, selected_options)
@@ -92,6 +90,7 @@ def question_create(doc, current_question: str, current_options: list, highlight
             current_question, current_options = process_options(current_question, current_options, selected_options, question_numbers)
             create_quiz(data, current_question, current_options, highlights, platform, selected_options)
         return question_numbers
+    
     for index, paragraph in enumerate(doc.paragraphs):
         text = paragraph.text.strip()
         if is_question(text):
@@ -99,15 +98,18 @@ def question_create(doc, current_question: str, current_options: list, highlight
                 current_question, current_options = process_options(current_question, current_options, selected_options, question_numbers)
                 question_numbers += 1
                 create_quiz(data, current_question, current_options, highlights, platform, selected_options)
-            current_question = text
+
             line_numbers = 1
-            while not is_option(doc.paragraphs[index + line_numbers].text.strip()) and not is_question(doc.paragraphs[index + line_numbers].text.strip()):
+            while index + line_numbers < len(doc.paragraphs) and not is_option(doc.paragraphs[index + line_numbers].text.strip()) and not is_question(doc.paragraphs[index + line_numbers].text.strip()):
                 next_text = doc.paragraphs[index + line_numbers].text.strip()
                 if next_text: 
                     current_question += '\n' + next_text
-                    print(next_text)
                 line_numbers+=1
+                
+            print(current_question)
             current_options.clear()  # Clear the options list for the new questions
+            current_question = text
+            
         elif is_option(text):
             for option in split_options(text):
                 current_options.append(option)
