@@ -93,8 +93,8 @@ def question_create(doc, current_question: str, current_options: list, highlight
     
     for index, paragraph in enumerate(doc.paragraphs):
         text = paragraph.text.strip()
-        if is_question(text) and not is_question(doc.paragraphs[index - 1].text.strip()):
-            
+        if is_question(text) and not is_question(doc.paragraphs[index - 2].text.strip()):
+            print(doc.paragraphs[index - 1].text.strip())
             if current_question and len(current_options) > 0:
                 current_question, current_options = process_formats(current_question, current_options, selected_options, question_numbers)
                 question_numbers += 1
