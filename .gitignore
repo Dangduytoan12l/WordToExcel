@@ -12,15 +12,13 @@ __pycache__
 ######################
 *.xlsx
 .vscode
-.ipynb_checkpoints
 # Extension files #
 ###################
 settings.json
 test.py
 WordToExcel.spec
 .gitignore
-
 # Folder #
 ###################
 Output
-Dist
+Docx
