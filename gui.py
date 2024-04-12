@@ -32,7 +32,7 @@ def select_platform() -> None:
     ans_checkboxes["Bôi đen"].set(True)
 
     # Function to handle the selection and close the window
-    def on_select_button_click():
+    def on_select_button_click() -> None:
         selected_formats = [format for format, var in ans_checkboxes.items() if var.get()]
         if selected_formats:
             answer_var.set(selected_formats[0])  # Set the selected format

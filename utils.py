@@ -7,7 +7,7 @@ import pandas as pd
 from tkinter.filedialog import askopenfilenames
 
 # Helper function to open a window that specifies a file's path
-def open_folder():
+def open_folder() -> tuple[str]:
     """Opens a file dialog to select multiple files."""
     filepaths = askopenfilenames()
     return filepaths
