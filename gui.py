@@ -22,14 +22,14 @@ def select_platform() -> None:
     platform_label = tk.Label(window_platform, text="Đáp án được định dạng:", font=("Helvetica", 12))
     platform_label.grid(row=0, column=0, columnspan=3, pady=10)
     ans_checkboxes = {}  # Dictionary to hold checkbox variables
-
+    
     # Create checkboxes for each answer format
+    ans_checkboxes["Bôi đen"].set(True)
     for i, answer_format in enumerate(answer_formats):
         var = tk.BooleanVar()
         ans_checkboxes[answer_format] = var
         checkbox = tk.Checkbutton(window_platform, text=answer_format, variable=var, anchor="w")
         checkbox.grid(row=1 + (i // 3), column=i % 3, pady=10, padx=10, sticky="w")
-    ans_checkboxes["Bôi đen"].set(True)
 
     # Function to handle the selection and close the window
     def on_select_button_click():
@@ -69,7 +69,7 @@ def run(ans_checkboxes) -> None:
         return
 
     # Step 2: Get platform and selected options
-    status_label.config(text="Starting processing...")
+    status_label.config(text="Đang xử lý...")
     platform = platform_selection.get()
     selected_options = [option for option, var in checkboxes.items() if var.get()]
     selected_options.extend([ans for ans, var in ans_checkboxes.items() if var.get()])
