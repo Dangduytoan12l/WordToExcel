@@ -94,7 +94,7 @@ def question_create(doc, current_question: str, current_options: list, highlight
     
     for index, paragraph in enumerate(doc.paragraphs):
         text = paragraph.text.strip()
-        #The second condition is to handle multiple line questions, index-2 because of how the current question is updated
+        #The second condition is to handle multiple line questions, index-2 is because of how the current question is updated
         if is_question(text) and not is_question(doc.paragraphs[index - 2].text.strip()):
             if current_question and len(current_options) > 0:
                 current_question, current_options = process_formats(current_question, current_options, selected_options, question_numbers)
