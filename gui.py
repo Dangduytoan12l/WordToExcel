@@ -124,10 +124,10 @@ main_frame.pack(pady=20, padx=10)
 
 # Load the logo image
 try:
-    p1 = tk.PhotoImage(file='logo.png')
+    logo = tk.PhotoImage(file='logo.png')
 except Exception:
-    p1 = tk.PhotoImage(file='Images\logo.png')
-window.iconphoto(True, p1)
+    logo = tk.PhotoImage(file='Images\logo.png')
+window.iconphoto(True, logo)
 
 # Header label
 header_label = tk.Label(main_frame, text="Convert Word to Excel", font=("Helvetica", 16))
