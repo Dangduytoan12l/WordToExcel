@@ -14,7 +14,7 @@ def open_folder():
 
 # Capitalize first letter
 def CFL(text: str) -> str:
-    """Capitalize the first letter of the string."""
+    """Capitalize the first letter of the string and dont make the rest lower case."""
     if text:
         return text[0].upper() + text[1:]
     return text

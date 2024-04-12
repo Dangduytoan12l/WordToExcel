@@ -3,7 +3,7 @@ import re
 import docx
 import pypandoc
 import win32com.client as win32
-from utils import CFL, create_quiz, extract_format_text, is_option, is_question, process_formats, split_options
+from utils import CFL, create_quiz, extract_format_text, split_options, is_option, is_question, process_formats
 
 def format_file(file_path: str, del_list: list, selected_options: list) -> tuple:
     """
