@@ -17,8 +17,7 @@ def CFL(text: str) -> str:
     """Capitalize the first letter of the string."""
     if text:
         return text[0].upper() + text[1:]
-    else:
-        return text
+    return text
 
 # Helper function to check whether a text is a question
 def is_question(text: str) -> bool:
@@ -55,7 +54,6 @@ def extract_format_text(text: str, selected_options: list) -> str:
             if all(option in selected_options for option in options) and condition(run):
                 format_text += run.text
                 break
-    
     return format_text
 
 #Get the correct answer index and remove that answer to optimze the performance
@@ -202,7 +200,7 @@ def data_frame(data: list, file_path: str, selected_options: list, open_file: bo
         df = df.sample(frac=1)
     
     df.to_excel(output_path, index=False)
-    if "A,B,C,D" in selected_options and "Xóa chữ 'Câu'" in selected_options:
+    if "A,B,C,D" in selected_options and "Xóa chữ 'A,B,C,D'" in selected_options:
         case = ("A.", "B.", "C.", "D.", "a.", "b.", "c.", "d.","A ", "B ", "C ", "D ", "a ", "b ", "c ", "d ")
         workbook = openpyxl.load_workbook(output_path)
         worksheet = workbook.active

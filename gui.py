@@ -24,12 +24,12 @@ def select_platform() -> None:
     ans_checkboxes = {}  # Dictionary to hold checkbox variables
     
     # Create checkboxes for each answer format
-    ans_checkboxes["Bôi đen"].set(True)
     for i, answer_format in enumerate(answer_formats):
         var = tk.BooleanVar()
         ans_checkboxes[answer_format] = var
         checkbox = tk.Checkbutton(window_platform, text=answer_format, variable=var, anchor="w")
         checkbox.grid(row=1 + (i // 3), column=i % 3, pady=10, padx=10, sticky="w")
+    ans_checkboxes["Bôi đen"].set(True)
 
     # Function to handle the selection and close the window
     def on_select_button_click():
@@ -106,8 +106,8 @@ def run(ans_checkboxes) -> None:
     # Step 7: Delete temporary files
     for temp_file in del_list:
         os.remove(temp_file)
-
     output_path = os.path.abspath("Output")
+    
     # Step 8: Open output directory
     if not get_explorer_windows(output_path):
         Popen(['explorer', "Output"], stdout=-1, stderr=-1)
@@ -152,7 +152,7 @@ platform_kahoot.grid(row=2, column=1, pady=10, padx=10, sticky="w")
 platform_blooket.grid(row=2, column=2, pady=10, padx=10, sticky="w")
 
 # Choice checkboxes
-checkbox_options = ["Xóa chữ 'Câu'", "Thêm chữ 'Câu'", "Sửa lỗi định dạng","Xóa chữ 'A,B,C,D'", "Xáo trộn câu hỏi", "Gộp nhiều tệp thành một"]
+checkbox_options = ["Xóa chữ 'Câu'", "Thêm chữ 'Câu'", "Sửa lỗi định dạng", "Xóa chữ 'A,B,C,D'", "Xáo trộn câu hỏi", "Gộp nhiều tệp thành một"]
 checkboxes = {}
 
 
