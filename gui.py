@@ -43,9 +43,6 @@ def select_platform() -> None:
     select_button = tk.Button(window_platform, text="Select", command=on_select_button_click)
     select_button.grid(row=3, column=1, pady=10)
 
-    # Make sure to run the on_platform_selected function when closing the window
-
-
 curr, next = False, False
 def update_checkboxes()-> None:
     """Function to make sure that only one checkbox can be selected at the same time."""

@@ -44,6 +44,7 @@ def format_file(file_path: str, del_list: list, selected_options: list) -> tuple
             if is_option(highlighted_text):
                 if "A,B,C,D" in selected_options:
                     highlights.append(CFL(match.group(1)))
+                #Regex to extract the correct answer with no white space
                 elif re.match(r'^[a-dA-D]\.(?=\s|$)(?=.+)',highlighted_text):
                     highlights.append(CFL(re.sub(r'^[a-dA-D]\.', '', highlighted_text)))
         return highlights
@@ -93,7 +94,7 @@ def question_create(doc, current_question: str, current_options: list, highlight
     
     for index, paragraph in enumerate(doc.paragraphs):
         text = paragraph.text.strip()
-        
+        #The second condition is to handle multiple line questions, index-2 because of how the current question is updated
         if is_question(text) and not is_question(doc.paragraphs[index - 2].text.strip()):
             if current_question and len(current_options) > 0:
                 current_question, current_options = process_formats(current_question, current_options, selected_options, question_numbers)
