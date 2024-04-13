@@ -36,7 +36,7 @@ def format_file(file_path: str, del_list: list, selected_options: list) -> list:
         highlights = []
         document = docx.Document(file_path)
         
-        #Append the highlighted text
+        # Append the highlighted text
         for paragraph in document.paragraphs:
             highlighted_text = extract_format_text(paragraph, selected_options)
             
@@ -44,7 +44,7 @@ def format_file(file_path: str, del_list: list, selected_options: list) -> list:
             if is_option(highlighted_text):
                 if "A,B,C,D" in selected_options:
                     highlights.append(CFL(match.group(1)))
-                #Regex to extract the correct answer with no white space
+                # Regex to extract the correct answer with no white space
                 elif re.match(r'^[a-dA-D]\.(?=\s|$)(?=.+)',highlighted_text):
                     highlights.append(CFL(re.sub(r'^[a-dA-D]\.', '', highlighted_text)))
         return highlights
