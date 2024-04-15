@@ -19,13 +19,13 @@ def CFL(text: str) -> str:
         return text[0].upper() + text[1:]
     return text
 
-# Helper function to check whether a text is a question
+# Helper function to check if a string is a question
 def is_question(text: str) -> bool:
     """Check if a text is a question."""
     regex_pattern = r"\b(?:Câu|câu|\d+)\b|\b(?:\d+)\."
     regex = re.compile(regex_pattern)
     return bool(regex.match(text))
-# Helper function to check if a paragraph starts with an option (A, B, C, D)
+# Helper function to check if a string is an option.
 def is_option(text: str) -> bool:
     """Check if a text is option"""
     if text.startswith(("A.", "B.", "C.", "D.", "a.", "b.", "c.", "d.","A ", "B ", "C ", "D ", "a ", "b ", "c ", "d ")):        
@@ -56,7 +56,7 @@ def extract_format_text(text: str, selected_options: list) -> str:
                 break
     return format_text
 
-#Get the correct answer index and remove that answer to optimze the performance
+# Get the correct answer index
 def get_correct_answer_index(options: list, highlights: list, contains_ABCD: bool ) -> int:
     """Find and return the index of the correct answer in a list of answer options based on highlighted text.    """
 
@@ -215,5 +215,4 @@ def data_frame(data: list, file_path: str, selected_options: list, open_file: bo
         
 def close_excel():
     """Close all instances of excel."""
-    # Closes an Excel application if it is open.
     subprocess.call("TASKKILL /F /IM EXCEL.EXE > nul 2>&1", shell=True)
