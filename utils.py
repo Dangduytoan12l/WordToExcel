@@ -4,6 +4,7 @@ import openpyxl
 import subprocess
 import win32com.client
 import pandas as pd
+from difflib import SequenceMatcher
 from tkinter.filedialog import askopenfilenames
 
 # Helper function to open a window that specifies a file's path
@@ -48,33 +49,40 @@ def extract_format_text(text: str, selected_options: list) -> str:
         ("Gạch chân",): lambda run: run.font.underline,
         ("Bôi màu",): lambda run: run.font.highlight_color,
     }
-    
+    case = r'^[a-dA-D]\.(?=\s|$)(?=.+)'
     for run in text.runs:
         for options, condition in formatting_conditions.items():
-            if all(option in selected_options for option in options) and condition(run):
-                format_text += run.text
+            if all(option in selected_options for option in options) and condition(run) and re.match(case, run.text.strip()):
+                format_text += run.text.strip()
                 break
-    return format_text
+    return format_text if re.match(case, format_text) else ""
+
 
 # Get the correct answer index
 def get_correct_answer_index(options: list, highlights: list, contains_ABCD: bool ) -> int:
     """Find and return the index of the correct answer in a list of answer options based on highlighted text.    """
 
     # Gets the index of the correct answer from options based on highlighted text.
+    count = 0
     for index, option_text in enumerate(options):
-        try:
-            if contains_ABCD:
-                if option_text[0] == highlights[0]:
-                    highlights.pop(0)
-                    return index+1
-            else:
-                option_text = CFL(re.sub(r'^[a-dA-D]\.', '', option_text).strip())
-                if option_text == highlights[0]:
-                    highlights.pop(0)
-                    return index+1
-        except Exception:
-            pass
-    return None
+        if contains_ABCD:
+            if option_text[0] == highlights[0]:
+                highlights.pop(0)
+                return index+1
+        else:
+            option_text = CFL(re.sub(r'^[a-dA-D]\.', '', option_text).strip())
+            if option_text.capitalize() == highlights[0].strip().capitalize():
+                highlights.pop(0)
+                return index+1
+            elif count <4:
+                count+=1
+            if count == 4:
+                most_identical_option_index = max(
+                    range(len(options)),
+                    key=lambda i: SequenceMatcher(None, options[i], highlights[0].strip()).ratio(),
+                )
+                highlights.pop(0)
+                return most_identical_option_index + 1
 
 def create_quiz(data: list, current_question: str, current_options: list, highlights: list, platform: str, selected_options: list) -> None:
     """Create a Quiz Question based on the specified platform."""
