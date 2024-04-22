@@ -1,8 +1,8 @@
 import os
 import re
 import docx
-import pypandoc
 import win32com.client as win32
+from pypandoc import convert_file
 from utils import CFL, create_quiz, extract_format_text, split_options, is_option, is_question, process_formats
 
 def format_file(file_path: str, del_list: list, selected_options: list) -> list:
@@ -15,7 +15,7 @@ def format_file(file_path: str, del_list: list, selected_options: list) -> list:
         temp_name = f'wteTemp{name}'
         
         # Load the DOCX document using pypandoc
-        pypandoc.convert_file(file_path_convert, 'plain', extra_args=['--wrap=none'], outputfile=f'{temp_name}.txt')
+        convert_file(file_path_convert, 'plain', extra_args=['--wrap=none'], outputfile=f'{temp_name}.txt')
         document = docx.Document()
         
         # Read the text from the file and replace soft returns with paragraph marks
@@ -40,8 +40,8 @@ def format_file(file_path: str, del_list: list, selected_options: list) -> list:
             highlighted_text = extract_format_text(paragraph, selected_options)
             match = re.match(r'^[a-dA-D]\.', highlighted_text)
             if is_option(highlighted_text):
-                if "A,B,C,D" in selected_options:
-                    highlights.append(CFL(match.group(1)))
+                if "A,B,C,D" in selected_options and match:
+                    highlights.append(highlighted_text[:-1])
                 # Regex to extract the correct answer with no white space
                 else:
                     highlights.append(CFL(re.sub(rf'{match} ', '', highlighted_text)))
@@ -63,6 +63,7 @@ def format_file(file_path: str, del_list: list, selected_options: list) -> list:
         word.ActiveDocument.SaveAs(temp_name, FileFormat=win32.constants.wdFormatXMLDocument)
         doc.Close(False)
         word.Quit()
+        
         #Delete the temporary .docx file
         del_list = convert_to_docx(temp_path, name, del_list)
         del_list.append(temp_path)
@@ -108,7 +109,7 @@ def question_create(doc, current_question: str, current_options: list, highlight
             else: 
                 if text.startswith("[") and text.endswith("]") and text.isupper():
                     continue
-                elif text.strip(): 
+                elif text.strip() and not is_option(doc.paragraphs[index-2].text.strip()): 
                     current_question += '\n'+text
     # Process the last question
     question_numbers = last_question(current_question, current_options, highlights, data, platform, selected_options, question_numbers)

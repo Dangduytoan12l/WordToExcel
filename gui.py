@@ -7,7 +7,7 @@ from utils import close_excel, open_folder, data_frame, get_explorer_windows
 from main import question_create, format_file
 
 
-def select_platform() -> None:
+def answer_format() -> None:
     """Create a new tkinter window to select the answer format"""
 
     window_platform = tk.Toplevel(window)  # Use Toplevel for a new window
@@ -37,7 +37,7 @@ def select_platform() -> None:
         if selected_formats:
             answer_var.set(selected_formats[0])  # Set the selected format
             window_platform.destroy()  # Close the window
-            status_label.config(text="Starting processing...",fg="black")
+            status_label.config(text="Đang xử lý...",fg="black")
             run(ans_checkboxes)  # Proceed with the main processing logic
 
     select_button = tk.Button(window_platform, text="Select", command=on_select_button_click)
@@ -93,14 +93,14 @@ def run(ans_checkboxes) -> None:
         doc = docx.Document(path)
         question_numbers = question_create(doc, current_question, current_options, highlights, data, platform, selected_options, question_numbers)
 
-        if "Gộp nhiều tệp thành một" not in selected_options:
+        if "Gộp nhiều file thành một" not in selected_options:
             question_numbers = 1
             data_frame(data, file_path, selected_options, open_file=True)
         else:
             all_data.extend(data)
 
     # Step 6: Merge multiple files if selected option is enabled
-    if "Gộp nhiều tệp thành một" in selected_options:
+    if "Gộp nhiều file thành một" in selected_options:
         data_frame(all_data, "Merged_File.xlsx", selected_options, open_file=True)
 
     # Step 7: Delete temporary files
@@ -125,7 +125,7 @@ main_frame.pack(pady=20, padx=10)
 # Load the logo image
 try:
     logo = tk.PhotoImage(file='logo.png')
-except Exception:
+except tk.TclError:
     logo = tk.PhotoImage(file='Images\logo.png')
 window.iconphoto(True, logo)
 
@@ -133,7 +133,7 @@ window.iconphoto(True, logo)
 header_label = tk.Label(main_frame, text="Convert Word to Excel", font=("Helvetica", 16))
 header_label.grid(row=0, column=0, columnspan=3, pady=10)
 # File selection button
-file_button = tk.Button(main_frame, text="Select Word Document", command=select_platform)
+file_button = tk.Button(main_frame, text="Select Word Document", command=answer_format)
 file_button.grid(row=1, column=0, columnspan=3, pady=10)
 
 # Platform radio buttons
@@ -152,7 +152,7 @@ platform_kahoot.grid(row=2, column=1, pady=10, padx=10, sticky="w")
 platform_blooket.grid(row=2, column=2, pady=10, padx=10, sticky="w")
 
 # Choice checkboxes
-checkbox_options = ["Xóa chữ 'Câu'", "Thêm chữ 'Câu'", "Sửa lỗi định dạng", "Xóa chữ 'A,B,C,D'", "Xáo trộn câu hỏi", "Gộp nhiều tệp thành một"]
+checkbox_options = ["Xóa chữ 'Câu'", "Thêm chữ 'Câu'", "Sửa lỗi định dạng", "Xóa chữ 'A,B,C,D'", "Xáo trộn câu hỏi", "Gộp nhiều file thành một"]
 checkboxes = {}
 
 
