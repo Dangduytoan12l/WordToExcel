@@ -237,6 +237,3 @@ def data_frame(data: list, file_path: str, selected_options: list, open_file: bo
     if open_file:
         os.startfile(output_path)
         
-def close_excel():
-    """Close all instances of Excel and save any open files."""
-    subprocess.run(["TASKKILL", "/F", "/IM", "EXCEL.EXE", "/SAVE"], capture_output=True)
