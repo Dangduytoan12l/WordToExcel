@@ -8,7 +8,7 @@ from difflib import SequenceMatcher
 from tkinter.filedialog import askopenfilenames
 
 # Helper function to open a window that specifies a file's path
-def open_folder() -> tuple[str]:
+def open_folder() -> list:
     """Opens a file dialog to select multiple files."""
     return askopenfilenames()
 
@@ -52,6 +52,7 @@ def extract_format_text(text: str, selected_options: list) -> str:
         for options, condition in formatting_conditions.items():
             if all(option in selected_options for option in options) and condition(run) and ("A,B,C,D" in selected_options or re.match(case, run.text.strip())):
                 format_text += run.text.strip()
+                print(run.text.strip())
                 break
     if "A,B,C,D" in selected_options:
         return format_text if re.match(r'^[a-dA-D]\.', format_text) else ""
@@ -111,7 +112,7 @@ def create_quiz(data: list, current_question: str, current_options: list, highli
             'Option 3': current_options[2] if len(current_options) > 2 else "",
             'Option 4': current_options[3] if len(current_options) > 3 else "",
             'Correct Answer': get_correct_answer_index(current_options, highlights, contains_ABCD),
-            'Time in seconds': 30,
+            'Time in seconds': 30
         })
         return data
 
@@ -124,7 +125,7 @@ def create_quiz(data: list, current_question: str, current_options: list, highli
             'Answer 3': current_options[2] if len(current_options) > 2 else "",
             'Answer 4': current_options[3] if len(current_options) > 3 else "",
             'Time limit': 30,
-            'Correct Answer': get_correct_answer_index(current_options, highlights, contains_ABCD),
+            'Correct Answer': get_correct_answer_index(current_options, highlights, contains_ABCD)
         })
         return data
 
@@ -137,7 +138,7 @@ def create_quiz(data: list, current_question: str, current_options: list, highli
             'Answer 3': current_options[2] if len(current_options) > 2 else "",
             'Answer 4': current_options[3] if len(current_options) > 3 else "",
             'Time limit': 30,
-            'Correct Answer': get_correct_answer_index(current_options, highlights, contains_ABCD),
+            'Correct Answer': get_correct_answer_index(current_options, highlights, contains_ABCD)
         })
         return data
 
@@ -204,9 +205,9 @@ def get_explorer_windows(target_path):
 # Create excel file
 def get_unique_file_path(output_path):
     count = 1
-    base, ext = os.path.splitext(output_path)
+    name, ext = os.path.splitext(output_path)
     while os.path.exists(output_path):
-        output_path = f"{base} ({count}){ext}"
+        output_path = f"{name} ({count}){ext}"
         count += 1
     return output_path
 
@@ -230,12 +231,12 @@ def data_frame(data: list, file_path: str, selected_options: list, open_file: bo
         worksheet = workbook.active
         for row in worksheet.iter_rows():
             for cell in row:
-                if cell.value and re.match(r'^[a-dA-D][\.:]', str(cell.value)):
+                if re.match(r'^[a-dA-D][\.:]', str(cell.value)):
                     cell.value = cell.value[2:]
         workbook.save(output_path)
-    
     if open_file:
         os.startfile(output_path)
+        
 def close_excel():
-    """Close all instances of excel."""
-    subprocess.call("TASKKILL /F /IM EXCEL.EXE > nul 2>&1", shell=True)
+    """Close all instances of Excel and save any open files."""
+    subprocess.run(["TASKKILL", "/F", "/IM", "EXCEL.EXE", "/SAVE"], capture_output=True)

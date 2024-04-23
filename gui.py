@@ -75,10 +75,7 @@ def run(ans_checkboxes) -> None:
     del_list = []
     question_numbers = 1
 
-    # Step 4: Close excel first to prevent any error
-    close_excel()
-
-    # Step 5: Process each selected file
+    # Step 4: Process each selected file
     for file_path in file_paths:
         data = []
         current_question = ""
@@ -99,16 +96,16 @@ def run(ans_checkboxes) -> None:
         else:
             all_data.extend(data)
 
-    # Step 6: Merge multiple files if selected option is enabled
+    # Step 5: Merge multiple files if selected option is enabled
     if "Gộp nhiều file thành một" in selected_options:
         data_frame(all_data, "Merged_File.xlsx", selected_options, open_file=True)
 
-    # Step 7: Delete temporary files
+    # Step 6: Delete temporary files
     for temp_file in del_list:
         os.remove(temp_file)
     output_path = os.path.abspath("Output")
     
-    # Step 8: Open output directory
+    # Step 7: Open output directory
     if not get_explorer_windows(output_path):
         Popen(['explorer', "Output"], stdout=-1, stderr=-1)
     status_label.config(text="Chuyển đổi thành công!", fg="green")
