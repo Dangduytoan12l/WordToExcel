@@ -3,7 +3,7 @@ import docx
 import tkinter as tk
 from subprocess import Popen
 from contextlib import suppress
-from utils import close_excel, open_folder, data_frame, get_explorer_windows
+from utils import open_folder, get_explorer_windows,data_frame
 from main import question_create, format_file
 
 
