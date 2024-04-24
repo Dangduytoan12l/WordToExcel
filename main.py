@@ -54,7 +54,7 @@ def format_file(file_path: str, del_list: list, selected_options: list) -> list:
     if ext == ".doc":
         # Convert .doc to .docx
         temp_name = f"wteDocTemp{name}"
-        temp_path = os.path.abspath(f"wteDocTemp{name}.docx")
+        temp_path = os.path.abspath(f"{temp_name}.docx")
         
         word = win32.gencache.EnsureDispatch('Word.Application')
         doc = word.Documents.Open(abs_file_path)
@@ -99,18 +99,14 @@ def question_create(doc, current_question: str, current_options: list, highlight
                 current_question, current_options = process_formats(current_question, current_options, selected_options, question_numbers)
                 question_numbers += 1
                 create_quiz(data, current_question, current_options, highlights, platform, selected_options)
-               
             current_options.clear()  # Clear the options list for the new questions
             current_question = text
         elif current_question:
             if is_option(text):
                 for option in split_options(text):
                     current_options.append(option)
-            else: 
-                if text.startswith("[") and text.endswith("]") and text.isupper():
-                    continue
-                elif text.strip() and not is_option(doc.paragraphs[index-2].text.strip()): 
-                    current_question += '\n'+text
+            elif text.strip() and not is_option(doc.paragraphs[index-2].text.strip()): 
+                current_question += '\n'+text
     # Process the last question
     question_numbers = last_question(current_question, current_options, highlights, data, platform, selected_options, question_numbers)
     return question_numbers

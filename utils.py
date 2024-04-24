@@ -1,11 +1,11 @@
 import os
 import re
 import openpyxl
-import subprocess
 import win32com.client
 import pandas as pd
 from difflib import SequenceMatcher
 from tkinter.filedialog import askopenfilenames
+
 
 # Helper function to open a window that specifies a file's path
 def open_folder() -> list:
@@ -61,9 +61,7 @@ def extract_format_text(text: str, selected_options: list) -> str:
 
 # Get the correct answer index
 def get_correct_answer_index(options: list, highlights: list, contains_ABCD: bool ) -> int:
-    """Find and return the index of the correct answer in a list of answer options based on highlighted text.    """
-
-    # Gets the index of the correct answer from options based on highlighted text.
+    """Find and return the index of the correct answer in a list of answer options based on highlighted text. """
     count = 0
     for index, option_text in enumerate(options):
         try:
