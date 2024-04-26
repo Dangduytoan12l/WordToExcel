@@ -38,13 +38,13 @@ def format_file(file_path: str, del_list: list, selected_options: list) -> list:
         # Append the highlighted text
         for paragraph in document.paragraphs:
             highlighted_text = extract_format_text(paragraph, selected_options)
-            match = re.match(r'^[a-dA-D]\.', highlighted_text)
-            if is_option(highlighted_text):
+            if highlighted_text is not None:
+                match = re.match(r'^[a-dA-D]', highlighted_text)
                 if "A,B,C,D" in selected_options and match:
-                    highlights.append(highlighted_text[:-1])
+                    highlights.append(highlighted_text)
                 # Regex to extract the correct answer with no white space
                 else:
-                    highlights.append(CFL(re.sub(rf'{match} ', '', highlighted_text)))
+                    highlights.append(CFL(re.sub(rf'{match}. ', '', highlighted_text)))
         return highlights
 
     # Split the file path into name and extension

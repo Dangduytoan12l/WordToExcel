@@ -3,7 +3,6 @@ import re
 import openpyxl
 import win32com.client
 import pandas as pd
-from difflib import SequenceMatcher
 from tkinter.filedialog import askopenfilenames
 
 
@@ -11,7 +10,6 @@ from tkinter.filedialog import askopenfilenames
 def open_folder() -> list:
     """Opens a file dialog to select multiple files."""
     return askopenfilenames()
-
 
 # Capitalize first letter
 def CFL(text: str) -> str:
@@ -31,33 +29,26 @@ def is_option(text: str) -> bool:
 # Helper function to split options that are on the same line
 def split_options(text: str) -> list:
     """Splits options that are on the same line into a list."""
-    return re.split(r'\s+(?=[a-dA-D]\.\s+(?![a-dA-D]\.)|[a-dA-D]\.\s+(?![a-dA-D]\.))', re.sub(r"  ", " ", text))
+    return re.split(r'\s+(?=[a-dA-D]\.\s+(?![a-dA-D]\.)|[a-dA-D]\.\s+(?![a-dA-D]\.))', re.sub(r" {2,}", " ", text))
 
 
 def extract_format_text(text: str, selected_options: list) -> str:
-    """Extracts formatted text (highlighted, bold, underline, italic) if not return empty string."""
-    format_text = ""
-    
+    """Extracts formatted text (highlighted, bold, underline, italic) if not return None."""
+
     formatting_conditions = {
         ("Bôi đen",): lambda run: run.font.bold,
         ("In nghiêng",): lambda run: run.font.italic,
         ("Gạch chân",): lambda run: run.font.underline,
         ("Bôi màu",): lambda run: run.font.highlight_color,
     }
-    case = r'^([a-dA-D].(?=\s[a-zA-Z]|[a-zA-Z])|[a-dA-D].(?=\s[0-9]|[0-9]))(?=.+)'
 
-    if "A,B,C,D" not in selected_options:
-        options = [re.sub(r'^[a-dA-D]\.\s*', '', option).strip() for option in selected_options]
     for run in text.runs:
         for options, condition in formatting_conditions.items():
-            if all(option in selected_options for option in options) and condition(run) and ("A,B,C,D" in selected_options or re.match(case, run.text.strip())):
-                format_text += run.text.strip()
-                print(run.text.strip())
-                break
-    if "A,B,C,D" in selected_options:
-        return format_text if re.match(r'^[a-dA-D]\.', format_text) else ""
-    return format_text if re.match(case, format_text) else ""
-
+            if all(option in selected_options for option in options) and condition(run) and is_option(run.text):
+                if "A,B,C,D" in selected_options:
+                    return run.text[0]
+                else:
+                    return run.text.strip()
 
 # Get the correct answer index
 def get_correct_answer_index(options: list, highlights: list, contains_ABCD: bool ) -> int:
@@ -65,34 +56,19 @@ def get_correct_answer_index(options: list, highlights: list, contains_ABCD: boo
     count = 0
     for index, option_text in enumerate(options):
         try:
-            if contains_ABCD:
-                if option_text[0] == highlights[0]:
-                    highlights.pop(0)
-                    return index+1
+            if contains_ABCD and option_text[0] == highlights[0]:
+                highlights.pop(0)
+                return index+1
             else:
-                if option_text.capitalize() == highlights[0].strip().capitalize():
+                if option_text.lower() == highlights[0].strip().lower():
                     highlights.pop(0)
-                    max_ratio = max(
-                        [SequenceMatcher(None, option, highlights[0].strip()).ratio() for option in options],
-                        default=0  # default to 0 if options list is empty
-                    )
-                    print(max_ratio)
                     return index+1
                 elif count <4:
                     count+=1
                 if count == 4:
-                    ratio_threshold = 0.8
-                    max_ratio = max(
-                        [SequenceMatcher(None, option, highlights[0].strip()).ratio() for option in options],
-                        default=0  # default to 0 if options list is empty
-                    )
-                    if max_ratio < ratio_threshold:
-                        return 0
-                    return max(
-                        range(len(options)),
-                        key=lambda i: SequenceMatcher(None, options[i], highlights[0].strip()).ratio()
-                    )
-        except Exception:
+                    highlights.pop(0)
+                    return 0
+        except:
             pass
 def create_quiz(data: list, current_question: str, current_options: list, highlights: list, platform: str, selected_options: list) -> None:
     """Create a Quiz Question based on the specified platform."""
