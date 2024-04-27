@@ -28,13 +28,12 @@ def is_option(text: str) -> bool:
     return re.match(r'^[a-dA-D][\.:]', text)
 # Helper function to split options that are on the same line
 def split_options(text: str) -> list:
-    """Splits options that are on the same line into a list."""
+    """Splits options that are on the same line into a list and remove any redundant whitespace."""
     return re.split(r'\s+(?=[a-dA-D]\.\s+(?![a-dA-D]\.)|[a-dA-D]\.\s+(?![a-dA-D]\.))', re.sub(r" {2,}", " ", text))
 
 
 def extract_format_text(text: str, selected_options: list) -> str:
     """Extracts formatted text (highlighted, bold, underline, italic) if not return None."""
-
     formatting_conditions = {
         ("Bôi đen",): lambda run: run.font.bold,
         ("In nghiêng",): lambda run: run.font.italic,
@@ -72,45 +71,39 @@ def get_correct_answer_index(options: list, highlights: list, contains_ABCD: boo
             pass
 def create_quiz(data: list, current_question: str, current_options: list, highlights: list, platform: str, selected_options: list) -> None:
     """Create a Quiz Question based on the specified platform."""
-    # Creates a question based on the specified platform and adds it to the data list.
-    contains_ABCD = False
-    if "A,B,C,D" in selected_options:
-        contains_ABCD = True
+    contains_ABCD = "A,B,C,D" in selected_options
     def quizizz(data: list, current_question: str, current_options: list, highlights: list) -> list:
-        # Creates a Quizizz-style question and adds it to the data list.
         data.append({
             'Question Text': current_question,
             'Question Type': "Multiple Choice",
-            'Option 1': current_options[0] if len(current_options) > 0 else "",
-            'Option 2': current_options[1] if len(current_options) > 1 else "",
-            'Option 3': current_options[2] if len(current_options) > 2 else "",
-            'Option 4': current_options[3] if len(current_options) > 3 else "",
+            'Option 1': current_options[0] if len(current_options) >= 1 else "",
+            'Option 2': current_options[1] if len(current_options) >= 2 else "",
+            'Option 3': current_options[2] if len(current_options) >= 3 else "",
+            'Option 4': current_options[3] if len(current_options) >= 4 else "",
             'Correct Answer': get_correct_answer_index(current_options, highlights, contains_ABCD),
             'Time in seconds': 30
         })
         return data
 
     def kahoot(data: list, current_question: str, current_options: list, highlights: list) -> list:
-        # Creates a Kahoot-style question and adds it to the data list.
         data.append({
             'Question': current_question,
-            'Answer 1': current_options[0] if len(current_options) > 0 else "",
-            'Answer 2': current_options[1] if len(current_options) > 1 else "",
-            'Answer 3': current_options[2] if len(current_options) > 2 else "",
-            'Answer 4': current_options[3] if len(current_options) > 3 else "",
+            'Answer 1': current_options[0] if len(current_options) >= 1 else "",
+            'Answer 2': current_options[1] if len(current_options) >= 2 else "",
+            'Answer 3': current_options[2] if len(current_options) >= 3 else "",
+            'Answer 4': current_options[3] if len(current_options) >= 4 else "",
             'Time limit': 30,
             'Correct Answer': get_correct_answer_index(current_options, highlights, contains_ABCD)
         })
         return data
 
     def blooket(data: list, current_question: str, current_options: list, highlights: list) -> list:
-        # Creates a Blooket-style question and adds it to the data list.
         data.append({
             'Question Text': current_question,
-            'Answer 1': current_options[0] if len(current_options) > 0 else "",
-            'Answer 2': current_options[1] if len(current_options) > 1 else "",
-            'Answer 3': current_options[2] if len(current_options) > 2 else "",
-            'Answer 4': current_options[3] if len(current_options) > 3 else "",
+            'Answer 1': current_options[0] if len(current_options) >= 1 else "",
+            'Answer 2': current_options[1] if len(current_options) >= 2 else "",
+            'Answer 3': current_options[2] if len(current_options) >= 3 else "",
+            'Answer 4': current_options[3] if len(current_options) >= 4 else "",
             'Time limit': 30,
             'Correct Answer': get_correct_answer_index(current_options, highlights, contains_ABCD)
         })
@@ -136,7 +129,7 @@ def process_formats(current_question: str, current_options: list, selected_optio
 
     if "Sửa lỗi định dạng" in selected_options:
 
-        # Add a period after the number following "Câu" if it's missing
+        # Add a period after the number following "Câu" if it is  missing
         if match and not match_with_dot:
             # Add a period after the number
             current_question = re.sub(pattern, lambda m: f'Câu {m.group(1)}.', current_question, 1)
