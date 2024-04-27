@@ -59,11 +59,10 @@ def get_correct_answer_index(options: list, highlights: list, contains_ABCD: boo
                 highlights.pop(0)
                 return index+1
             else:
+                count+=1
                 if option_text.lower() == highlights[0].strip().lower():
                     highlights.pop(0)
                     return index+1
-                elif count <4:
-                    count+=1
                 if count == 4:
                     highlights.pop(0)
                     return 0
