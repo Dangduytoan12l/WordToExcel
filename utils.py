@@ -189,7 +189,7 @@ def process_formats(current_question: str, current_options: list, selected_optio
 
 def get_explorer_windows(target_path):
     """
-    Find an Explorer window by a given path and bring it to the foreground.
+    Find an Explorer window by a given name and bring it to the foreground.
 
     Parameters:
         target_path (str): The path of the Explorer window to find.

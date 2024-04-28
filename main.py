@@ -52,7 +52,7 @@ def format_file(file_path: str, del_list: list, selected_options: list) -> list:
                     highlights.append(highlighted_text)
                 # Regex to extract the correct answer with no white space
                 else:
-                    highlights.append(CFL(re.sub(rf'{match}. ', '', highlighted_text)))
+                    highlights.append(CFL(re.sub(f'{match}. ', '', highlighted_text)))
         return highlights
 
     # Split the file path into name and extension
