@@ -8,8 +8,16 @@ from utils import CFL, create_quiz, extract_format_text, split_options, is_optio
 def format_file(file_path: str, del_list: list, selected_options: list) -> list:
     """
     Format a document file to DOCX, extract formatted text, and return relevant information.
-    The extracted highlights are based on specific formatting rules within the document.
+    
+    Args:
+        file_path (str): The path to the document file.
+        del_list (list): A list to store the paths of temporary files.
+        selected_options (list): A list of selected options for formatting.
+        
+    Returns:
+        list: Containing the path to the converted DOCX file, a list of highlighted text, and a list of paths of temporary files.
     """
+
     def convert_to_docx(file_path_convert: str, name: str, del_list: list) -> list:
         global temp_path_docx
         temp_name = f'wteTemp{name}'
@@ -83,7 +91,21 @@ def question_create(doc, current_question: str, current_options: list, highlight
     """
     Process a document to create quiz questions and options based on specific formatting.
     The document structure and formatting rules must align with the processing logic for accurate results.
+    
+    Parameters:
+    - doc: The document object to process.
+    - current_question: The current question being processed.
+    - current_options: The list of current options being processed.
+    - highlights: The list of highlights being processed.
+    - data: The list of data being processed.
+    - platform: The platform for which the quiz is being created.
+    - selected_options: The list of selected options being processed.
+    - question_numbers: The current question number.
+    
+    Returns:
+    - int: The updated question number.
     """
+
     def last_question(current_question: str, current_options: list, highlights: list, data: list, platform: str, selected_options: list, question_numbers: int) -> int:
         if current_question and len(current_options) > 0:
             question_numbers += 1

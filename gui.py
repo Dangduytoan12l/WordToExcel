@@ -129,9 +129,18 @@ window.iconphoto(True, logo)
 # Header label
 header_label = tk.Label(main_frame, text="Convert Word to Excel", font=("Helvetica", 16))
 header_label.grid(row=0, column=0, columnspan=3, pady=10)
+
 # File selection button
 file_button = tk.Button(main_frame, text="Select Word Document", command=answer_format)
 file_button.grid(row=1, column=0, columnspan=3, pady=10)
+
+# Create a frame for the version label
+version_label = tk.Label(main_frame, text="Author: caphefalumi", fg="blue", font=("Open sans", 8))
+version_label.grid(row=5, column=2, sticky="e", padx=5, pady=10)
+
+# Status label
+status_label = tk.Label(main_frame, text="", fg="green")
+status_label.grid(row=5, column=0, columnspan=3, pady=10, padx=10)  # Center the label using "sticky"
 
 # Platform radio buttons
 platform_options = ["Quizizz", "Kahoot", "Blooket"]
@@ -162,13 +171,6 @@ for i, option_text in enumerate(checkbox_options):
 # Set "Sửa lỗi định dạng" checkbox to be always checked
 checkboxes["Sửa lỗi định dạng"].set(True)
 
-# Create a frame for the version label
-version_label = tk.Label(main_frame, text="Author: caphefalumi", fg="blue", font=("Open sans", 8))
-version_label.grid(row=5, column=2, sticky="e", padx=5, pady=10)
-
-# Status label
-status_label = tk.Label(main_frame, text="", fg="green")
-status_label.grid(row=5, column=0, columnspan=3, pady=10, padx=10)  # Center the label using "sticky"
-
 # Start the GUI application
-with suppress(KeyboardInterrupt): window.mainloop()
+if __name__ == "__main__":
+    with suppress(KeyboardInterrupt): window.mainloop()
