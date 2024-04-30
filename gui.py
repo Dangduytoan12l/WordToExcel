@@ -83,7 +83,7 @@ def run(ans_checkboxes) -> None:
 
         # Convert .doc to .docx if needed and get the new .docx file path
         path, highlights, del_list = format_file(file_path, del_list, selected_options)
-        if path is False:
+        if path is None:
             status_label.config(text="Lỗi định dạng file, vui lòng chọn file Word!", fg="red")
             break
 

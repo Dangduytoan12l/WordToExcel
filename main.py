@@ -84,7 +84,7 @@ def format_file(file_path: str, del_list: list, selected_options: list) -> list:
         highlights = extract_original_format(file_path, selected_options)
         return temp_path_docx, highlights, del_list   
     
-    return False, None, None
+    return None, None, None 
 
 # Function to process questions and options
 def question_create(doc, current_question: str, current_options: list, highlights: list, data: list, platform: str, selected_options: list, question_numbers: int) -> int:
