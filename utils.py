@@ -19,15 +19,16 @@ def CFL(text: str) -> str:
 def is_question(text: str) -> bool:
     """Check if a text is a question."""
     return re.match(r'\b(?:Câu|câu|\d+)\b|\b(?:\d+)\.',text)
+
 # Helper function to check if a string is an option.
 def is_option(text: str) -> bool:
     """Check if a text is option"""
     return re.match(r'^[a-dA-D][\.:]', text)
+
 # Helper function to split options that are on the same line
 def split_options(text: str) -> list:
     """Splits options that are on the same line into a list and remove any redundant whitespace."""
     return re.split(r'\s+(?=[a-dA-D]\.\s+(?![a-dA-D]\.)|[a-dA-D]\.\s+(?![a-dA-D]\.))', re.sub(r" {2,}", " ", text))
-
 
 def extract_format_text(text: str, selected_options: list) -> str:
     """Extracts formatted text (highlighted, bold, underline, italic) if not return None."""
@@ -75,6 +76,7 @@ def get_correct_answer_index(options: list, highlights: list, contains_ABCD: boo
                     return 0
         except:
             pass
+        
 def create_quiz(data: list, current_question: str, current_options: list, highlights: list, platform: str, selected_options: list) -> None:
     """Create a Quiz Question based on the specified platform."""
     contains_ABCD = "A,B,C,D" in selected_options
@@ -122,7 +124,6 @@ def create_quiz(data: list, current_question: str, current_options: list, highli
     elif platform == "Blooket":
         blooket(data, current_question, current_options, highlights)
 
-
 def process_formats(current_question: str, current_options: list, selected_options:list, question_number: int) -> None:
     """
     Process and format questions and answer options based on selected formatting options and the question number.
@@ -151,8 +152,6 @@ def process_formats(current_question: str, current_options: list, selected_optio
     Note:
         This function modifies the input parameters in-place.
     """
-
-    
     pattern = r'^Câu (\d+)'
     match = re.search(pattern, current_question)
     match_with_dot = re.search(r'^Câu (\d+)[\.:]', current_question)
@@ -259,6 +258,7 @@ def data_frame(data: list, file_path: str, selected_options: list, open_file: bo
     output_path = get_unique_file_path(os.path.join(output_directory, file_name))
     
     df = pd.DataFrame(data)
+
     
     if "Xáo trộn câu hỏi" in selected_options:
         df = df.sample(frac=1)

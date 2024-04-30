@@ -76,6 +76,7 @@ def run(ans_checkboxes) -> None:
     question_numbers = 1
 
     # Step 4: Process each selected file
+    
     for file_path in file_paths:
         data = []
         current_question = ""
@@ -86,7 +87,7 @@ def run(ans_checkboxes) -> None:
         if path is None:
             status_label.config(text="Lỗi định dạng file, vui lòng chọn file Word!", fg="red")
             break
-
+        
         doc = docx.Document(path)
         question_numbers = question_create(doc, current_question, current_options, highlights, data, platform, selected_options, question_numbers)
 
@@ -173,4 +174,7 @@ checkboxes["Sửa lỗi định dạng"].set(True)
 
 # Start the GUI application
 if __name__ == "__main__":
-    with suppress(KeyboardInterrupt): window.mainloop()
+    try:
+        with suppress(KeyboardInterrupt): window.mainloop()
+    except:
+        [os.remove(os.path.join(os.getcwd(), file)) for file in os.listdir() if file.startswith("wteTemp")]
