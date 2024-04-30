@@ -106,12 +106,10 @@ def question_create(doc, current_question: str, current_options: list, highlight
     - int: The updated question number.
     """
 
-    def last_question(current_question: str, current_options: list, highlights: list, data: list, platform: str, selected_options: list, question_numbers: int) -> int:
+    def last_question(current_question: str, current_options: list, highlights: list, data: list, platform: str, selected_options: list, question_numbers: int) -> None:
         if current_question and len(current_options) > 0:
-            question_numbers += 1
             current_question, current_options = process_formats(current_question, current_options, selected_options, question_numbers)
             create_quiz(data, current_question, current_options, highlights, platform, selected_options)
-        return question_numbers
     
     for index, paragraph in enumerate(doc.paragraphs):
         text = paragraph.text.strip()
@@ -130,6 +128,7 @@ def question_create(doc, current_question: str, current_options: list, highlight
             elif text.strip() and not is_option(doc.paragraphs[index-2].text.strip()): 
                 current_question += '\n'+text
     # Process the last question
-    question_numbers = last_question(current_question, current_options, highlights, data, platform, selected_options, question_numbers)
+    question_numbers += 1
+    last_question(current_question, current_options, highlights, data, platform, selected_options, question_numbers)
     return question_numbers
 
