@@ -177,4 +177,4 @@ if __name__ == "__main__":
     try:
         with suppress(KeyboardInterrupt): window.mainloop()
     except:
-        [os.remove(os.path.join(os.getcwd(), file)) for file in os.listdir() if file.startswith("wteTemp")]
+        [os.remove(os.path.join(os.getcwd(), file)) for file in os.listdir() if file.startswith("wteTemp") or file.startswith("wteDocTemp")]

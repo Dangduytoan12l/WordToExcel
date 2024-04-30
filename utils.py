@@ -203,8 +203,7 @@ def get_explorer_windows(target_path):
                     return True
             except Exception:
                 pass
-    return None
-
+    return False
 def get_unique_file_path(output_path):
     """
     Generates a unique file path by appending a count to the given output path if it already exists.
