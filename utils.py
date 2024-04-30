@@ -13,9 +13,7 @@ def open_folder() -> list:
 # Capitalize first letter
 def CFL(text: str) -> str:
     """Capitalize the first letter of the string and dont make the rest lower case."""
-    if text:
-        return text[0].upper() + text[1:]
-    return text
+    return text[0].upper() + text[1:] if text else ""
 
 # Helper function to check if a string is a question
 def is_question(text: str) -> bool:
@@ -272,4 +270,3 @@ def data_frame(data: list, file_path: str, selected_options: list, open_file: bo
     
     if open_file:
         os.startfile(output_path)
-        
