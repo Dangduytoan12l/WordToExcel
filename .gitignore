@@ -9,6 +9,7 @@
 *.rar
 *.yml
 .env
+*.spec
 __pycache__
 # Application #
 ######################
