@@ -7,17 +7,20 @@
 *.so
 *.zip
 *.rar
+*.yml
+.env
 __pycache__
 # Application #
 ######################
 *.xlsx
 .vscode
+Dockerfile
+
 # Extension files #
 ###################
 settings.json
 test.py
 WordToExcel.spec
-.gitignore
 # Folder #
 ###################
 Output
