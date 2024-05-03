@@ -18,12 +18,12 @@ def format_file(file_path: str, del_list: list, selected_options: list) -> list:
         list: Containing the path to the converted DOCX file, a list of highlighted text, and a list of paths of temporary files.
     """
 
-    def convert_to_docx(file_path_convert: str, name: str, del_list: list) -> list:
+    def convert_to_docx(docx_path: str, name: str, del_list: list) -> list:
         global temp_path_docx
         temp_name = f'wteTemp{name}'
         
         # Load the DOCX document using pypandoc
-        convert_file(file_path_convert, 'plain', extra_args=['--wrap=none'], outputfile=f'{temp_name}.txt')
+        convert_file(docx_path, 'plain', extra_args=['--wrap=none'], outputfile=f'{temp_name}.txt')
         document = docx.Document()
         
         # Read the text from the file and replace soft returns with paragraph marks
@@ -34,7 +34,6 @@ def format_file(file_path: str, del_list: list, selected_options: list) -> list:
             document.add_paragraph(line)
         
         document.save(f'{temp_name}.docx')
-        os.remove(f'{temp_name}.txt')
         temp_path_docx = os.path.abspath(f'{temp_name}.docx')
         del_list.append(temp_path_docx)
         return del_list
