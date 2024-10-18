@@ -102,8 +102,8 @@ def run(ans_checkboxes) -> None:
         data_frame(all_data, "Merged_File.xlsx", selected_options, open_file=True)
 
     # Step 6: Delete temporary files
-    for temp_file in del_list:
-        os.remove(temp_file)
+    [os.remove(os.path.join(os.getcwd(), file)) for file in os.listdir() if file.startswith("wteTemp") or file.startswith("wteDocTemp")]
+        
     output_path = os.path.abspath("Output")
     
     # Step 7: Open output directory
